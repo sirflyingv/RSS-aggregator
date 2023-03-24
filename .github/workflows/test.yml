@@ -11,7 +11,7 @@ jobs:
         with:
           node-version: '18.x'
           cache: 'npm'
-      - run: make pippa
+      - run: make check
       # - run: make lint
       # - run: make test
       # - name: Test & publish code coverage
