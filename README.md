@@ -1,15 +1,3 @@
-# 🚀 Welcome to your new awesome project!
-
-This project has been created using **webpack-cli**, you can now run
-
-```
-npm run build
-```
-
-or
-
-```
-yarn build
-```
-
-to bundle your application
+[![Maintainability](https://api.codeclimate.com/v1/badges/fa4c87728e41cbc4baf6/maintainability)](https://codeclimate.com/github/sirflyingv/frontend-project-11/maintainability)
+[![Actions Status](https://github.com/sirflyingv/frontend-project-11/workflows/hexlet-check/badge.svg)](https://github.com/sirflyingv/frontend-project-11/actions)
+[![Maintainability](https://api.codeclimate.com/v1/badges/fa4c87728e41cbc4baf6/maintainability)](https://codeclimate.com/github/sirflyingv/frontend-project-11/maintainability)
