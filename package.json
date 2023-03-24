@@ -20,6 +20,8 @@
   },
   "homepage": "https://github.com/sirflyingv/frontend-project-11#readme",
   "dependencies": {
+    "bootstrap": "^5.2.3",
+    "css-loader": "^6.7.3",
     "eslint": "^8.36.0"
   },
   "devDependencies": {
@@ -30,6 +32,7 @@
     "eslint-config-airbnb-base": "^15.0.0",
     "html-webpack-plugin": "^5.5.0",
     "prettier": "^2.8.7",
+    "style-loader": "^3.3.2",
     "webpack": "^5.76.3",
     "webpack-cli": "^5.0.1",
     "webpack-dev-server": "^4.13.1"
