@@ -1,5 +1,5 @@
-pippa:
-	echo KEKW
+install:
+	npm install
 
 build:
 	npm run build
