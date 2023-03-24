@@ -3,3 +3,6 @@ install:
 
 build:
 	npm run build
+
+check:
+	echo KEKW
