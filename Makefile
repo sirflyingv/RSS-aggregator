@@ -6,3 +6,6 @@ build:
 
 check:
 	echo KEKW
+
+run:
+	npx webpack serve
