@@ -9,9 +9,12 @@
   <body class="d-flex flex-column min-vh-100">
     <main class="flex-grow-1">
       <section class="container-fluid bg-dark p-5">
-        <div class="container text-white col-md-10 col-lg-8 mx-auto text-white">
-          <h1 class="display-3">RSS агрегатор</h1>
-          <p class="lead">Начните читать RSS сегодня! Это легко, это красиво.</p>
+        <div
+          id="form-container"
+          class="container text-white col-md-10 col-lg-8 mx-auto text-white"
+        >
+          <h1 id="header-text" class="display-3"></h1>
+          <p id="lead" class="lead"></p>
           <form class="rss-form text-body" action="">
             <div class="row">
               <div class="col">
@@ -23,14 +26,15 @@
                     name="url"
                     aria-label="url"
                     class="form-control w-100"
-                    placeholder="ссылка RSS"
+                    placeholder=""
                     autocomplete="off"
                   />
-                  <label for="url-input">Ссылка RSS</label>
+                  <label for="url-input"></label>
                 </div>
               </div>
               <div class="col-auto">
                 <input
+                  id="button-add"
                   type="submit"
                   class="h-100 btn btn-lg btn-primary px-sm-5"
                   value="Добавить"
@@ -38,8 +42,10 @@
               </div>
             </div>
           </form>
-          <p class="mt-2 mb-0 text-muted">Пример: https://ru.hexlet.io/lessons.rss</p>
-          <p id="invalid-url-alert" class="feedback m-0 position-absolute small"></p>
+          <p id="sample" class="mt-2 mb-0 text-muted"></p>
+          <div id="feedback-wrapper">
+            <!-- <p id="feedback" class="feedback m-0 position-absolute small"></p> -->
+          </div>
         </div>
       </section>
     </main>

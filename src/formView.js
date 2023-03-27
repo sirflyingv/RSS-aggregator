@@ -1,34 +1,51 @@
-import { state } from './index.js';
 // View
 
+const headerTextEl = document.querySelector('#header-text');
+const leadEl = document.querySelector('#lead');
+const sampleEl = document.querySelector('#sample');
+const btnAdd = document.querySelector('#button-add');
 const form = document.querySelector('form');
 const input = document.querySelector('#url-input');
-const inputFeedbackEl = document.querySelector('#invalid-url-alert');
+const label = document.querySelector('label');
+const feedbackWrapperEl = document.querySelector('#feedback-wrapper');
 
-export const render = () => {
-  if (state.formState === 'filling') {
-    form.reset();
+export const render = (watchedState) => {
+  label.innerText = watchedState.uiState.label;
+  headerTextEl.innerText = watchedState.uiState.header;
+  leadEl.innerText = watchedState.uiState.lead;
+  sampleEl.innerText = watchedState.uiState.sample;
+  btnAdd.value = watchedState.uiState.buttonText;
+
+  if (watchedState.formState === 'filling') {
     input.classList.remove('is-invalid');
-    inputFeedbackEl.innerText = '';
+    feedbackWrapperEl.innerHTML = `
+    <p id="feedback" class="feedback m-0 position-absolute small">
+      ${watchedState.uiState.feedback}
+    </p>`;
   }
-  if (state.formState === 'invalid') {
-    inputFeedbackEl.classList.remove('text-success');
-    inputFeedbackEl.classList.add('text-danger');
+  if (watchedState.formState === 'invalid') {
     input.classList.add('is-invalid');
-    inputFeedbackEl.innerText = 'Ссылка должна быть валидным URL';
+    feedbackWrapperEl.innerHTML = `
+      <p id="feedback" class="feedback m-0 position-absolute small text-danger">
+      ${watchedState.uiState.feedback}
+      </p>`;
   }
-  if (state.formState === 'repeated_value') {
-    inputFeedbackEl.classList.remove('text-success');
-    inputFeedbackEl.classList.add('text-danger');
+  if (watchedState.formState === 'not_unique') {
     input.classList.add('is-invalid');
-    inputFeedbackEl.innerText = 'RSS уже существует';
+    feedbackWrapperEl.innerHTML = `
+    <p id="feedback" class="feedback m-0 position-absolute small text-danger">
+    ${watchedState.uiState.feedback}
+    </p>`;
   }
-  if (state.formState === 'submitted') {
+  if (watchedState.formState === 'submitted') {
     // This when rss file successfully downloaded
     input.classList.remove('is-invalid');
-    inputFeedbackEl.classList.remove('text-danger');
-    inputFeedbackEl.classList.add('text-success');
-    inputFeedbackEl.innerText = 'RSS успешно загружен';
+    feedbackWrapperEl.innerHTML = `
+    <p id="feedback" 
+      class="feedback m-0 position-absolute small text-success">
+      ${watchedState.uiState.feedback}
+    </p>`;
+    input.value = '';
   }
 };
 

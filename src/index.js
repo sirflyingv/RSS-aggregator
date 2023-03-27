@@ -1,39 +1,93 @@
-import 'bootstrap';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import app from './app.js';
 
-import * as yup from 'yup';
-import onChange from 'on-change';
-import { addFormInputHandler, render } from './formView';
+app();
 
-// Model
-export const state = {
-  links: [],
-  formState: 'filling',
-};
+// import 'bootstrap';
+// import 'bootstrap/dist/css/bootstrap.min.css';
 
-const watchedState = onChange(state, render);
+// import * as yup from 'yup';
+// import onChange from 'on-change';
+// import { addFormInputHandler, render } from './formView';
 
-// controller
-const handleFormInput = (value) => {
-  inputSchema
-    .validate(value)
-    .then((value) => {
-      watchedState.links.push(value);
-      watchedState.formState = 'submitted'; // it should be downloaded first
-    })
-    .catch((err) => {
-      if (err.message === 'invalid URL') watchedState.formState = 'invalid';
-      if (err.message === 'already added') watchedState.formState = 'repeated_value';
-      console.error(err);
-    });
-};
+// import i18n from 'i18next';
+// import locales from './locales/index.js';
+// export const i18nInstance = i18n.createInstance();
 
-addFormInputHandler(handleFormInput);
+// const { ru } = locales;
 
-render();
-// utils
-const inputSchema = yup
-  .string()
-  .trim()
-  .url('invalid URL')
-  .test('is unique', 'already added', (url) => !state.links.includes(url));
+// // Model
+// export const state = {
+//   links: [],
+//   uiState: {
+//     header: '',
+//     lead: '',
+//     label: '',
+//     buttonText: '',
+//     sample: '',
+//     feedback: '',
+//   },
+//   formState: 'filling',
+// };
+
+// i18nInstance
+//   .init({
+//     lng: 'ru',
+//     debug: false,
+//     resources: {
+//       ru,
+//     },
+//   })
+//   .then(function (t) {
+//     watchedState.uiState = {
+//       header: i18nInstance.t('header'),
+//       lead: i18nInstance.t('lead'),
+//       label: i18nInstance.t('label'),
+//       buttonText: i18nInstance.t('buttonText'),
+//       sample: i18nInstance.t('sample'),
+//       feedback: i18nInstance.t('feedbackFilling'),
+//     };
+//   });
+
+// export const watchedState = onChange(state, render);
+
+// // controller
+// const handleFormInput = (value) => {
+//   console.log(state);
+//   inputSchema
+//     .validate(value)
+//     .then((value) => {
+//       watchedState.links.push(value);
+//       watchedState.formState = 'submitted'; // it should be downloaded first
+//       watchedState.uiState.feedback = i18nInstance.t('feedbackSubmitted');
+//     })
+//     .catch((err) => {
+//       console.error(err.message);
+//     });
+// };
+
+// addFormInputHandler(handleFormInput);
+
+// // render();
+
+// // utils
+// const inputSchema = yup
+//   .string()
+//   .required('no_input')
+//   .trim()
+//   .url((err) => {
+//     watchedState.formState = 'invalid';
+//     watchedState.uiState.feedback = i18nInstance.t('feedbackInvalid');
+//     return `The value ${err.value} is not a valid URL.`;
+//   })
+//   .test(
+//     'is unique',
+//     (err) => `URL ${err.value} is already added`,
+//     (url) => {
+//       const isUnique = !state.links.includes(url);
+//       if (!isUnique) {
+//         watchedState.formState = 'not_unique';
+//         watchedState.uiState.feedback = i18nInstance.t('feedbackNotUnique');
+//       }
+//       return isUnique;
+//     },
+//   );
