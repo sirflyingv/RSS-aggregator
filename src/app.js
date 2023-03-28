@@ -1,54 +1,52 @@
 import 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
+import axios from 'axios';
 import * as yup from 'yup';
 import onChange from 'on-change';
 import { addFormInputHandler, render } from './formView';
-
 import i18n from 'i18next';
 import locales from './locales/index.js';
 
-export default () => {
-  const i18nInstance = i18n.createInstance();
+export const i18nInstance = i18n.createInstance();
+const { ru } = locales;
 
-  const { ru } = locales;
-
+export const app = () => {
   // Model
+  const defaultLang = 'ru';
+
+  const initialState = {
+    links: [],
+    rssData: [],
+    uiState: {
+      lang: 'ru',
+    },
+    formState: 'loading',
+  };
+
   const state = {
     links: [],
+    rssData: [],
     uiState: {
-      header: '',
-      lead: '',
-      label: '',
-      buttonText: '',
-      sample: '',
-      feedback: '',
+      lang: defaultLang || initialState.uiState.lang,
     },
-    formState: 'filling',
+    formState: initialState.formState,
   };
+  const watchedState = onChange(state, () => {
+    render(watchedState);
+  });
 
   i18nInstance
     .init({
-      lng: 'ru',
+      lng: state.uiState.lang,
       debug: false,
       resources: {
         ru,
       },
     })
     .then(function (t) {
-      watchedState.uiState = {
-        header: i18nInstance.t('header'),
-        lead: i18nInstance.t('lead'),
-        label: i18nInstance.t('label'),
-        buttonText: i18nInstance.t('buttonText'),
-        sample: i18nInstance.t('sample'),
-        feedback: i18nInstance.t('feedbackFilling'),
-      };
+      watchedState.formState = 'filling';
     });
-
-  const watchedState = onChange(state, () => {
-    render(watchedState);
-  });
 
   // controller
   const handleFormInput = (value) => {
@@ -56,8 +54,31 @@ export default () => {
       .validate(value)
       .then((value) => {
         watchedState.links.push(value);
-        watchedState.formState = 'submitted'; // it should be downloaded first
-        watchedState.uiState.feedback = i18nInstance.t('feedbackSubmitted');
+        watchedState.formState = 'awaiting';
+        return getRssData(value);
+      })
+      .then((response) => {
+        if (response.data.status.error) {
+          watchedState.formState = 'invalid_rss';
+          throw new Error('absolutely nothing on that link');
+        }
+        if (response.data.status.http_code !== 200) {
+          watchedState.formState = 'invalid_rss';
+          throw new Error('invalid page address');
+        }
+        if (response.data.status.http_code == 200) {
+          watchedState.rssData.push(response.data.contents);
+          watchedState.formState = 'submitted';
+        }
+
+        return response.data.contents;
+      })
+      .then((contents) => {
+        const kek = xmlParser.parseFromString(
+          contents,
+          'application/xml',
+        ).documentElement;
+        console.log(kek);
       })
       .catch((err) => {
         console.error(err.message);
@@ -66,9 +87,21 @@ export default () => {
 
   addFormInputHandler(handleFormInput);
 
-  //   render(watchedState);
-
   // utils
+
+  // routing requests READ DOCS TO AVOID CACHED RESULTS
+  // REMOVE HARDCODE
+  const getRssData = (url) => {
+    return axios.get(
+      `https://allorigins.hexlet.app/get?url=${encodeURIComponent(url)}`,
+    );
+  };
+
+  // parsing XML
+
+  const xmlParser = new DOMParser();
+
+  // validating url input
   const inputSchema = yup
     .string()
     .required('no_input')
