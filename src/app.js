@@ -68,7 +68,9 @@ export const app = () => {
         }
         if (response.data.status.http_code !== 200) {
           watchedState.formState = 'invalid_rss';
-          throw new Error('invalid page address');
+          throw new Error(
+            `Could not get RSS from ${response.data.status.url}. Source status: ${response.data.status.http_code}`,
+          );
         }
         if (response.data.status.http_code == 200) {
           return response.data.contents;
@@ -94,22 +96,20 @@ export const app = () => {
         getRssData(link)
           .then((response) => {
             if (response.data.status.http_code !== 200) {
-              console.log(response.data.status);
-              throw new Error('invalid rss data', response.data.status);
+              throw new Error(
+                `Could not update source ${link}. Origin proxy status: ${response.status}. RSS source status code: ${response.data.status.http_code}`,
+              );
             }
-            if (response.data.status.http_code == 200) {
-              return response.data.contents;
-            }
+            return response.data.contents;
           })
           .then((data) => {
-            const newData = rssParser(data);
-            const currentPosts = newData.posts;
-            const freshPosts = currentPosts.filter((newPost) => {
+            const updatedPosts = rssParser(data).posts;
+            const freshPosts = updatedPosts.filter((newPost) => {
               return !watchedState.posts.some((loadedPost) => {
                 return _.isEqual(loadedPost, newPost);
               });
             });
-            console.log(freshPosts);
+            // console.log(freshPosts);
             watchedState.posts.push(...freshPosts);
           })
           .catch((err) => {
@@ -117,7 +117,7 @@ export const app = () => {
           });
       });
     }
-    setTimeout(updateFeed, 5000); // magic number
+    setTimeout(updateFeed, 1000); // magic number
   };
 
   updateFeed();
