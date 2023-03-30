@@ -1,14 +1,24 @@
 import 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-import axios from 'axios';
-import * as yup from 'yup';
+import { UPDATE_INTERVAL } from './config.js';
+
 import onChange from 'on-change';
-import { addFormInputHandler, addShowButtonHandler, render } from './formView';
 import i18n from 'i18next';
+import * as yup from 'yup';
 import locales from './locales/index.js';
-import { XMLParser } from 'fast-xml-parser';
 import _ from 'lodash';
+
+import { getRssData, rssParser, inputSchema } from './helpers.js';
+
+import { addFormInputHandler, renderForm } from './Views/formView';
+import {
+  renderPosts,
+  addShowButtonHandler,
+  addLinkHandler,
+} from './Views/postsView';
+import renderModal from './Views/modalView';
+import renderChannels from './Views/channelsView';
 
 export const i18nInstance = i18n.createInstance();
 const { ru } = locales;
@@ -40,8 +50,14 @@ export const app = () => {
     },
     formState: initialState.formState,
   };
+
   const watchedState = onChange(state, () => {
-    render(watchedState);
+    renderForm(watchedState);
+    renderModal(watchedState);
+    if (watchedState.channels.length > 0) {
+      renderChannels(watchedState);
+      renderPosts(watchedState);
+    }
   });
 
   i18nInstance
@@ -94,14 +110,15 @@ export const app = () => {
       });
   };
 
-  const handleShowButton = (postLink) => {
+  const handlePostClick = (postLink) => {
     const chosenPost = watchedState.posts.find((post) => post.link === postLink);
     watchedState.uiState.modalPost = chosenPost;
     watchedState.uiState.readPosts.push(chosenPost);
   };
 
   addFormInputHandler(handleFormInput);
-  addShowButtonHandler(handleShowButton);
+  addShowButtonHandler(handlePostClick);
+  addLinkHandler(handlePostClick);
 
   const updateFeed = () => {
     if (watchedState.links.length > 0) {
@@ -129,36 +146,10 @@ export const app = () => {
           });
       });
     }
-    setTimeout(updateFeed, 50000); // magic number
+    setTimeout(updateFeed, UPDATE_INTERVAL);
   };
 
   updateFeed();
-
-  // utils
-
-  // REMOVE HARDCODE
-  function getRssData(url) {
-    return axios.get(
-      `https://allorigins.hexlet.app/get?disableCache=true&url=${encodeURIComponent(
-        url,
-      )}`,
-    );
-  }
-
-  // parsing XML
-  function rssParser(xml) {
-    const parser = new XMLParser();
-    const parsedXML = parser.parse(xml);
-    const channelData = {
-      channel: {
-        title: parsedXML.rss.channel.title,
-        description: parsedXML.rss.channel.description,
-      },
-      posts: parsedXML.rss.channel.item,
-    };
-
-    return channelData;
-  }
 
   // validating url input
   const inputSchema = yup

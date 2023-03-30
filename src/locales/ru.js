@@ -11,6 +11,10 @@ export default {
     feedbackSubmitted: 'RSS успешно загружен',
     feedbackNotUnique: 'RSS уже существует',
     feedbackFilling: '',
+    postsHeader: 'Посты',
+    channelsHeader: 'Фиды',
     postOpenBtn: 'Просмотр',
+    modalReadFull: 'Читать полностью',
+    modalCloseButton: 'Закрыть',
   },
 };
