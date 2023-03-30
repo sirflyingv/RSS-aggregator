@@ -6,8 +6,11 @@ export default {
     buttonText: 'Добавить',
     sample: 'Пример: https://ru.hexlet.io/lessons.rss',
     feedbackInvalid: 'Ссылка должна быть валидным URL',
+    feedbackRssInvalid: 'Ресурс не содержит валидный RSS',
+    feedbackAwaiting: 'Загружается...',
     feedbackSubmitted: 'RSS успешно загружен',
     feedbackNotUnique: 'RSS уже существует',
     feedbackFilling: '',
+    postOpenBtn: 'Просмотр',
   },
 };

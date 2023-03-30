@@ -10,6 +10,9 @@ const input = document.querySelector('#url-input');
 const label = document.querySelector('label');
 const feedbackWrapperEl = document.querySelector('#feedback-wrapper');
 
+const feedsEl = document.querySelector('.feeds');
+const postsEl = document.querySelector('.posts');
+
 export const render = (watchedState) => {
   label.innerText = i18nInstance.t('label');
   headerTextEl.innerText = i18nInstance.t('header');
@@ -41,27 +44,30 @@ export const render = (watchedState) => {
   }
   if (watchedState.formState === 'awaiting') {
     btnAdd.setAttribute('disabled', true);
+    input.setAttribute('disabled', true);
     input.classList.remove('is-invalid');
     feedbackWrapperEl.innerHTML = `
     <p id="feedback" 
       class="feedback m-0 position-absolute small">
-      ${''}
+      ${i18nInstance.t('feedbackAwaiting')}
     </p>`;
     input.value = '';
   }
   if (watchedState.formState === 'invalid_rss') {
     btnAdd.removeAttribute('disabled');
+    input.removeAttribute('disabled');
     input.classList.remove('is-invalid');
     feedbackWrapperEl.innerHTML = `
     <p id="feedback" 
       class="feedback m-0 position-absolute small text-danger">
-      ${'Ресурс не содержит валидный RSS'}
+      ${i18nInstance.t('feedbackRssInvalid')}
     </p>`;
     input.value = '';
   }
   if (watchedState.formState === 'submitted') {
     // This when rss file successfully downloaded
     btnAdd.removeAttribute('disabled');
+    input.removeAttribute('disabled');
     // input.classList.remove('is-invalid');
     feedbackWrapperEl.innerHTML = `
     <p id="feedback" 
@@ -72,7 +78,62 @@ export const render = (watchedState) => {
   }
 
   // rendering rss
-  // console.log(watchedState.links);
+  if (watchedState.channels.length > 0) {
+    // feeds
+    feedsEl.innerHTML = `
+    <div class="card border-0">
+      <div class="card-body">
+        <h2 class="card-title h4">Фиды</h2>
+      </div>
+      <ul class="list-group border-0 rounded-0"></ul>
+    </div>`;
+    const feedsUl = feedsEl.querySelector('ul');
+    watchedState.channels.forEach((channel) => {
+      const channelHTML = `
+      <li class="list-group-item border-0 border-end-0">
+        <h3 class="h6 m-0">${channel.title}</h3>
+        <p class="m-0 small text-black-50">${channel.description}</p>
+      </li>`;
+      feedsUl.insertAdjacentHTML('afterbegin', channelHTML);
+    });
+
+    // posts
+    postsEl.innerHTML = `
+    <div class="card border-0">
+      <div class="card-body">
+        <h2 class="card-title h4">Посты</h2>
+      </div>
+      <ul class="list-group border-0 rounded-0"></ul>
+    </div>`;
+    const postsUl = postsEl.querySelector('ul');
+    watchedState.posts.forEach((post) => {
+      const postlHTML = `
+      <li
+      class="list-group-item d-flex justify-content-between align-items-start border-0 border-end-0"
+    >
+      <a
+        href="${post.link}"
+        class="fw-bold"
+        data-id="6"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+      ${post.title}
+      </a>
+      <button
+        type="button"
+        class="btn btn-outline-primary btn-sm"
+        data-id="6"
+        data-bs-toggle="modal"
+        data-bs-target="#modal"
+      >
+      ${i18nInstance.t('postOpenBtn')}
+      </button>
+    </li>
+    `;
+      postsUl.insertAdjacentHTML('afterbegin', postlHTML);
+    });
+  }
 };
 
 export const addFormInputHandler = (handler) => {
