@@ -56,8 +56,8 @@ export const app = () => {
     inputSchema
       .validate(value)
       .then((value) => {
-        state.links.push(value); // hmmmmmmmmmmmm
         watchedState.formState = 'awaiting';
+        watchedState.links.push(value);
         return getRssData(value);
       })
       .then((response) => {
@@ -77,6 +77,7 @@ export const app = () => {
         const { channel, posts } = rssParser(contents);
         watchedState.channels.push(channel);
         watchedState.posts.push(...posts);
+        // sort the posts?
         watchedState.formState = 'submitted';
       })
       .catch((err) => {
