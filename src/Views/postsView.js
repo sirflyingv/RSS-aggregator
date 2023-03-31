@@ -50,6 +50,7 @@ export const addShowButtonHandler = (handler) => {
   });
 };
 
+// not activating links used by middle button or through context menu
 export const addLinkHandler = (handler) => {
   postsEl.addEventListener('click', (e) => {
     if (e.target.tagName !== 'A') return;

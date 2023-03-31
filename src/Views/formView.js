@@ -80,32 +80,32 @@ export const renderForm = (watchedState) => {
     input.value = '';
   }
   if (watchedState.formState === 'submitted') {
-    btnAdd.removeAttribute('disabled');
-    input.removeAttribute('disabled');
-    input.classList.remove('is-invalid');
-    feedbackWrapperEl.innerHTML = `
-    <p id="feedback"
-      class="feedback m-0 position-absolute small text-success">${i18nInstance.t(
-        'feedbackSubmitted',
-      )}</p>`;
-    input.value = '';
-
-    // btnAdd.disabled = false;
-    // input.disabled = false;
+    // btnAdd.removeAttribute('disabled');
+    // input.removeAttribute('disabled');
     // input.classList.remove('is-invalid');
+    // feedbackWrapperEl.innerHTML = `
+    // <p id="feedback"
+    //   class="feedback m-0 position-absolute small text-success">${i18nInstance.t(
+    //     'feedbackSubmitted',
+    //   )}</p>`;
     // input.value = '';
-    // const feedbackEl = document.createElement('p');
-    // feedbackEl.id = 'feedback';
-    // feedbackEl.classList.add(
-    //   'feedback',
-    //   'm-0',
-    //   'position-absolute',
-    //   'small',
-    //   'text-success',
-    // );
-    // feedbackEl.textContent = i18nInstance.t('feedbackSubmitted');
-    // feedbackWrapperEl.innerHTML = '';
-    // feedbackWrapperEl.appendChild(feedbackEl);
+
+    btnAdd.disabled = false;
+    input.disabled = false;
+    input.classList.remove('is-invalid');
+    input.value = '';
+    const feedbackEl = document.createElement('p');
+    feedbackEl.id = 'feedback';
+    feedbackEl.classList.add(
+      'feedback',
+      'm-0',
+      'position-absolute',
+      'small',
+      'text-success',
+    );
+    feedbackEl.textContent = 'RSS успешно загружен';
+    feedbackWrapperEl.innerHTML = '';
+    feedbackWrapperEl.appendChild(feedbackEl);
   }
 };
 
