@@ -71,9 +71,7 @@ export const renderForm = (watchedState) => {
     //   class="feedback m-0 position-absolute small text-success">${i18nInstance.t(
     //     'feedbackSubmitted',
     //   )}</p>`;
-    feedbackWrapperEl.innerHTML = `
-    <p id="feedback" 
-      class="feedback m-0 position-absolute small text-success">RSS успешно загружен</p>`;
+    feedbackWrapperEl.innerHTML = `<p id="feedback" class="feedback m-0 position-absolute small text-success">RSS успешно загружен</p>`;
     input.value = '';
   }
 };
