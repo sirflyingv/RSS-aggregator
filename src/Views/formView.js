@@ -43,11 +43,11 @@ export const renderForm = (watchedState) => {
     btnAdd.setAttribute('disabled', true);
     input.setAttribute('disabled', true);
     input.classList.remove('is-invalid');
-    // feedbackWrapperEl.innerHTML = `
-    // <p id="feedback"
-    //   class="feedback m-0 position-absolute small">${i18nInstance.t(
-    //     'feedbackAwaiting',
-    //   )}</p>`;
+    feedbackWrapperEl.innerHTML = `
+    <p id="feedback"
+      class="feedback m-0 position-absolute small">${i18nInstance.t(
+        'feedbackAwaiting',
+      )}</p>`;
     input.value = '';
   }
   if (watchedState.formState === 'invalid_rss') {
@@ -66,12 +66,12 @@ export const renderForm = (watchedState) => {
     btnAdd.removeAttribute('disabled');
     input.removeAttribute('disabled');
     input.classList.remove('is-invalid');
-    // feedbackWrapperEl.innerHTML = `
-    // <p id="feedback"
-    //   class="feedback m-0 position-absolute small text-success">${i18nInstance.t(
-    //     'feedbackSubmitted',
-    //   )}</p>`;
-    feedbackWrapperEl.innerHTML = `<p id="feedback" class="feedback m-0 position-absolute small text-success">RSS успешно загружен</p>`;
+    feedbackWrapperEl.innerHTML = `
+    <p id="feedback"
+      class="feedback m-0 position-absolute small text-success">${i18nInstance.t(
+        'feedbackSubmitted',
+      )}</p>`;
+    // feedbackWrapperEl.innerHTML = `<p id="feedback" class="feedback m-0 position-absolute small text-success">RSS успешно загружен</p>`;
     input.value = '';
   }
 };
