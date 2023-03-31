@@ -88,8 +88,7 @@ export const renderForm = (watchedState) => {
       class="feedback m-0 position-absolute small text-success">${i18nInstance.t(
         'feedbackSubmitted',
       )}</p>`;
-    input.value = '';
-    console.log(feedbackWrapperEl.innerHTML);
+    input.value = 'APOUUUUUUUU';
     // btnAdd.disabled = false;
     // input.disabled = false;
     // input.classList.remove('is-invalid');
