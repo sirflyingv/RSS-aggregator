@@ -68,9 +68,9 @@ export const renderForm = (watchedState) => {
     // input.classList.remove('is-invalid');
     feedbackWrapperEl.innerHTML = `
     <p id="feedback" 
-      class="feedback m-0 position-absolute small text-success">
-      ${i18nInstance.t('feedbackSubmitted')}
-    </p>`;
+      class="feedback m-0 position-absolute small text-success">${i18nInstance.t(
+        'feedbackSubmitted',
+      )}</p>`;
     input.value = '';
   }
 };
