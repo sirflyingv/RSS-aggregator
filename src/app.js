@@ -82,12 +82,12 @@ export const app = () => {
         return getRssData(validLink);
       })
       .then((response) => {
-        if (response.data.status.error) {
-          watchedState.formState = 'invalid_rss';
-          throw new Error(
-            `Absolutely nothing on that link ${response.data.status.url}`,
-          );
-        }
+        // if (response.data.status.error) {
+        //   watchedState.formState = 'invalid_rss';
+        //   throw new Error(
+        //     `Absolutely nothing on that link ${response.data.status.url}`,
+        //   );
+        // }
         if (response.data.status.http_code !== 200) {
           watchedState.formState = 'invalid_rss';
           throw new Error(
@@ -95,6 +95,7 @@ export const app = () => {
           );
         }
         if (response.data.status.http_code === 200) {
+          watchedState.formState = 'submitted';
           return response.data.contents;
         }
       })
@@ -109,7 +110,7 @@ export const app = () => {
           watchedState.channels.push(channel);
           watchedState.posts.push(...posts.reverse());
           // sort the posts?
-          watchedState.formState = 'submitted';
+          // watchedState.formState = 'submitted';
         }
       })
       .catch((err) => {
