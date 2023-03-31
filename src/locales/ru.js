@@ -5,6 +5,7 @@ export default {
     label: 'Ссылка RSS',
     buttonText: 'Добавить',
     sample: 'Пример: https://ru.hexlet.io/lessons.rss',
+    feedbackNoInput: 'Не должно быть пустым',
     feedbackInvalid: 'Ссылка должна быть валидным URL',
     feedbackRssInvalid: 'Ресурс не содержит валидный RSS',
     feedbackAwaiting: 'Загружается...',

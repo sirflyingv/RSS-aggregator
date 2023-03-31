@@ -25,6 +25,13 @@ export const renderForm = (watchedState) => {
       'feedbackFilling',
     )}</p>`;
   }
+  if (watchedState.formState === 'no_input') {
+    // input.classList.add('is-invalid');
+    feedbackWrapperEl.innerHTML = `
+      <p id="feedback" class="feedback m-0 position-absolute small text-danger">${i18nInstance.t(
+        'feedbackNoInput',
+      )}</p>`;
+  }
   if (watchedState.formState === 'invalid') {
     input.classList.add('is-invalid');
     feedbackWrapperEl.innerHTML = `
@@ -74,16 +81,31 @@ export const renderForm = (watchedState) => {
   }
   if (watchedState.formState === 'submitted') {
     // This when rss file successfully downloaded
-    btnAdd.removeAttribute('disabled');
-    input.removeAttribute('disabled');
+    // btnAdd.removeAttribute('disabled');
+    // input.removeAttribute('disabled');
+    // input.classList.remove('is-invalid');
+    // feedbackWrapperEl.innerHTML = `
+    // <p id="feedback"
+    //   class="feedback m-0 position-absolute small text-success">${i18nInstance.t(
+    //     'feedbackSubmitted',
+    //   )}</p>`;
+    // input.value = '';
+    btnAdd.disabled = false;
+    input.disabled = false;
     input.classList.remove('is-invalid');
-    feedbackWrapperEl.innerHTML = `
-    <p id="feedback"
-      class="feedback m-0 position-absolute small text-success">${i18nInstance.t(
-        'feedbackSubmitted',
-      )}</p>`;
-    // feedbackWrapperEl.innerHTML = `<p id="feedback" class="feedback m-0 position-absolute small text-success">RSS успешно загружен</p>`;
     input.value = '';
+    const feedbackEl = document.createElement('p');
+    feedbackEl.id = 'feedback';
+    feedbackEl.classList.add(
+      'feedback',
+      'm-0',
+      'position-absolute',
+      'small',
+      'text-success',
+    );
+    feedbackEl.textContent = i18nInstance.t('feedbackSubmitted');
+    feedbackWrapperEl.innerHTML = '';
+    feedbackWrapperEl.appendChild(feedbackEl);
   }
 };
 

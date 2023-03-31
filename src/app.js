@@ -73,12 +73,12 @@ export const app = () => {
     });
 
   // controller
-  const handleFormInput = (link) => {
+  const handleFormInput = (inputLink) => {
     inputSchema
-      .validate(link)
+      .validate(inputLink)
       .then((validLink) => {
         watchedState.formState = 'awaiting';
-        // watchedState.links.push(validLink);
+        // watchedState.links.push(validLink); // in last then
         return getRssData(validLink);
       })
       .then((response) => {
@@ -104,7 +104,7 @@ export const app = () => {
           watchedState.formState = 'parsing_error';
           throw new Error('XML document is not RSS');
         } else {
-          watchedState.links.push(link);
+          watchedState.links.push(inputLink);
           const { channel, posts } = rss;
           watchedState.channels.push(channel);
           watchedState.posts.push(...posts.reverse());
@@ -161,11 +161,13 @@ export const app = () => {
   // validating url input
   const inputSchema = yup
     .string()
-    .required('no_input')
+    .required(() => {
+      watchedState.formState = 'no_input';
+      return `Input URL is empty`;
+    })
     .trim()
     .url((err) => {
       watchedState.formState = 'invalid';
-      watchedState.uiState.feedback = i18nInstance.t('feedbackInvalid');
       return `The value ${err.value} is not a valid URL.`;
     })
     .test(
@@ -175,7 +177,6 @@ export const app = () => {
         const isUnique = !state.links.includes(url);
         if (!isUnique) {
           watchedState.formState = 'not_unique';
-          watchedState.uiState.feedback = i18nInstance.t('feedbackNotUnique');
         }
         return isUnique;
       },
