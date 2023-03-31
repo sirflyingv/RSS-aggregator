@@ -55,7 +55,7 @@ export const renderForm = (watchedState) => {
     //   class="feedback m-0 position-absolute small">${i18nInstance.t(
     //     'feedbackAwaiting',
     //   )}</p>`;
-    input.value = '';
+    // input.value = '';
   }
   if (watchedState.formState === 'invalid_rss') {
     btnAdd.removeAttribute('disabled');
