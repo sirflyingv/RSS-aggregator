@@ -8,6 +8,7 @@ export default {
     feedbackNoInput: 'Не должно быть пустым',
     feedbackInvalid: 'Ссылка должна быть валидным URL',
     feedbackRssInvalid: 'Ресурс не содержит валидный RSS',
+    feedbackNetworkError: 'Ошибка сети',
     feedbackAwaiting: 'Загружается...',
     feedbackSubmitted: 'RSS успешно загружен',
     feedbackNotUnique: 'RSS уже существует',

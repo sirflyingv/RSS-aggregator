@@ -107,6 +107,17 @@ export const renderForm = (watchedState) => {
     feedbackWrapperEl.innerHTML = '';
     feedbackWrapperEl.appendChild(feedbackEl);
   }
+  if (watchedState.formState === 'network_error') {
+    btnAdd.removeAttribute('disabled');
+    input.removeAttribute('disabled');
+    input.classList.remove('is-invalid');
+    feedbackWrapperEl.innerHTML = `
+    <p id="feedback" 
+      class="feedback m-0 position-absolute small text-danger">${i18nInstance.t(
+        'feedbackNetworkError',
+      )}</p>`;
+    input.value = '';
+  }
 };
 
 export const addFormInputHandler = (handler) => {

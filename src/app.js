@@ -113,6 +113,7 @@ export const app = () => {
         }
       })
       .catch((err) => {
+        if (err.code === 'ERR_NETWORK') watchedState.formState = 'network_error';
         console.error(err.message);
       });
   };
