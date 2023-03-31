@@ -61,6 +61,17 @@ export const renderForm = (watchedState) => {
       )}</p>`;
     input.value = '';
   }
+  if (watchedState.formState === 'parsing_error') {
+    btnAdd.removeAttribute('disabled');
+    input.removeAttribute('disabled');
+    input.classList.remove('is-invalid');
+    feedbackWrapperEl.innerHTML = `
+    <p id="feedback" 
+      class="feedback m-0 position-absolute small text-danger">${i18nInstance.t(
+        'feedbackparsingError',
+      )}</p>`;
+    input.value = '';
+  }
   if (watchedState.formState === 'submitted') {
     // This when rss file successfully downloaded
     btnAdd.removeAttribute('disabled');

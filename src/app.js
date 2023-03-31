@@ -73,13 +73,13 @@ export const app = () => {
     });
 
   // controller
-  const handleFormInput = (value) => {
+  const handleFormInput = (link) => {
     inputSchema
-      .validate(value)
-      .then((value) => {
+      .validate(link)
+      .then((validLink) => {
         watchedState.formState = 'awaiting';
-        watchedState.links.push(value);
-        return getRssData(value);
+        // watchedState.links.push(validLink);
+        return getRssData(validLink);
       })
       .then((response) => {
         if (response.data.status.error) {
@@ -99,11 +99,18 @@ export const app = () => {
         }
       })
       .then((contents) => {
-        const { channel, posts } = rssParser(contents);
-        watchedState.channels.push(channel);
-        watchedState.posts.push(...posts.reverse());
-        // sort the posts?
-        watchedState.formState = 'submitted';
+        const rss = rssParser(contents);
+        if (!rss) {
+          watchedState.formState = 'parsing_error';
+          throw new Error('XML document is not RSS');
+        } else {
+          watchedState.links.push(link);
+          const { channel, posts } = rss;
+          watchedState.channels.push(channel);
+          watchedState.posts.push(...posts.reverse());
+          // sort the posts?
+          watchedState.formState = 'submitted';
+        }
       })
       .catch((err) => {
         console.error(err.message);

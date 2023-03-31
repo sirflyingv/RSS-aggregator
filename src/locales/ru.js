@@ -10,6 +10,7 @@ export default {
     feedbackAwaiting: 'Загружается...',
     feedbackSubmitted: 'RSS успешно загружен',
     feedbackNotUnique: 'RSS уже существует',
+    feedbackparsingError: 'Не удалось прочесть документ',
     feedbackFilling: '',
     postsHeader: 'Посты',
     channelsHeader: 'Фиды',

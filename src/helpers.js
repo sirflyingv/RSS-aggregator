@@ -11,6 +11,8 @@ export function getRssData(url) {
 export function rssParser(xml) {
   const parser = new XMLParser();
   const parsedXML = parser.parse(xml);
+  if (!parsedXML.rss) return;
+
   const channelData = {
     channel: {
       title: parsedXML.rss.channel.title,
