@@ -8,7 +8,7 @@ const btnAdd = document.querySelector('#button-add');
 const form = document.querySelector('form');
 const input = document.querySelector('#url-input');
 const label = document.querySelector('label');
-const feedbackWrapperEl = document.querySelector('#feedback-wrapper');
+// const feedbackWrapperEl = document.querySelector('#feedback-wrapper');
 const feedbacEl = document.querySelector('#feedback');
 
 export const renderForm = (watchedState) => {
@@ -107,13 +107,13 @@ export const renderForm = (watchedState) => {
     feedbacEl.classList.add('text-success');
     feedbacEl.classList.remove('text-danger');
     feedbacEl.innerText = i18nInstance.t('feedbackSubmitted');
+    input.value = '';
 
     // feedbackWrapperEl.innerHTML = `
     // <p id="feedback"
     //   class="feedback m-0 position-absolute small text-success">${i18nInstance.t(
     //     'feedbackSubmitted',
     //   )}</p>`;
-    input.value = '';
     // btnAdd.disabled = false;
     // input.disabled = false;
     // input.classList.remove('is-invalid');

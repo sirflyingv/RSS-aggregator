@@ -95,7 +95,7 @@ export const app = () => {
           );
         }
         if (response.data.status.http_code === 200) {
-          watchedState.formState = 'submitted'; // from next then
+          // watchedState.formState = 'submitted'; // from next then
           return response.data.contents;
         }
       })
@@ -110,7 +110,7 @@ export const app = () => {
           watchedState.channels.push(channel);
           watchedState.posts.push(...posts.reverse());
           // sort the posts?
-          // watchedState.formState = 'submitted';
+          watchedState.formState = 'submitted';
         }
       })
       .catch((err) => {
