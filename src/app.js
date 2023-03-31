@@ -95,7 +95,7 @@ export const app = () => {
           );
         }
         if (response.data.status.http_code === 200) {
-          watchedState.formState = 'submitted';
+          watchedState.formState = 'submitted'; // from next then
           return response.data.contents;
         }
       })
@@ -105,7 +105,7 @@ export const app = () => {
           watchedState.formState = 'parsing_error';
           throw new Error('XML document is not RSS');
         } else {
-          watchedState.links.push(inputLink);
+          watchedState.links.push(inputLink); // higher level argument
           const { channel, posts } = rss;
           watchedState.channels.push(channel);
           watchedState.posts.push(...posts.reverse());

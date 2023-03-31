@@ -9,6 +9,7 @@ const form = document.querySelector('form');
 const input = document.querySelector('#url-input');
 const label = document.querySelector('label');
 const feedbackWrapperEl = document.querySelector('#feedback-wrapper');
+const feedbacEl = document.querySelector('#feedback');
 
 export const renderForm = (watchedState) => {
   label.innerText = i18nInstance.t('label');
@@ -20,36 +21,50 @@ export const renderForm = (watchedState) => {
 
   if (watchedState.formState === 'filling') {
     input.classList.remove('is-invalid');
-    feedbackWrapperEl.innerHTML = `
-    <p id="feedback" class="feedback m-0 position-absolute small">${i18nInstance.t(
-      'feedbackFilling',
-    )}</p>`;
+    feedbacEl.innerText = i18nInstance.t('feedbackFilling');
+
+    // feedbackWrapperEl.innerHTML = `
+    // <p id="feedback" class="feedback m-0 position-absolute small">${i18nInstance.t(
+    //   'feedbackFilling',
+    // )}</p>`;
   }
   if (watchedState.formState === 'no_input') {
     // input.classList.add('is-invalid');
-    feedbackWrapperEl.innerHTML = `
-      <p id="feedback" class="feedback m-0 position-absolute small text-danger">${i18nInstance.t(
-        'feedbackNoInput',
-      )}</p>`;
+    feedbacEl.classList.add('text-danger');
+    feedbacEl.innerText = i18nInstance.t('feedbackNoInput');
+
+    // feedbackWrapperEl.innerHTML = `
+    //   <p id="feedback" class="feedback m-0 position-absolute small text-danger">${i18nInstance.t(
+    //     'feedbackNoInput',
+    //   )}</p>`;
   }
   if (watchedState.formState === 'invalid') {
     input.classList.add('is-invalid');
-    feedbackWrapperEl.innerHTML = `
-      <p id="feedback" class="feedback m-0 position-absolute small text-danger">${i18nInstance.t(
-        'feedbackInvalid',
-      )}</p>`;
+    feedbacEl.classList.add('text-danger');
+    feedbacEl.innerText = i18nInstance.t('feedbackInvalid');
+
+    // feedbackWrapperEl.innerHTML = `
+    //   <p id="feedback" class="feedback m-0 position-absolute small text-danger">${i18nInstance.t(
+    //     'feedbackInvalid',
+    //   )}</p>`;
   }
   if (watchedState.formState === 'not_unique') {
     input.classList.add('is-invalid');
-    feedbackWrapperEl.innerHTML = `
-    <p id="feedback" class="feedback m-0 position-absolute small text-danger">${i18nInstance.t(
-      'feedbackNotUnique',
-    )}</p>`;
+    feedbacEl.classList.add('text-danger');
+    feedbacEl.innerText = i18nInstance.t('feedbackNotUnique');
+
+    // feedbackWrapperEl.innerHTML = `
+    // <p id="feedback" class="feedback m-0 position-absolute small text-danger">${i18nInstance.t(
+    //   'feedbackNotUnique',
+    // )}</p>`;
   }
   if (watchedState.formState === 'awaiting') {
     btnAdd.setAttribute('disabled', true);
     input.setAttribute('disabled', true);
     input.classList.remove('is-invalid');
+    feedbacEl.classList.remove('text-danger');
+    // feedbacEl.innerText = i18nInstance.t('feedbackAwaiting');
+
     // feedbackWrapperEl.innerHTML = `
     // <p id="feedback"
     //   class="feedback m-0 position-absolute small">${i18nInstance.t(
@@ -61,34 +76,44 @@ export const renderForm = (watchedState) => {
     btnAdd.removeAttribute('disabled');
     input.removeAttribute('disabled');
     input.classList.remove('is-invalid');
-    feedbackWrapperEl.innerHTML = `
-    <p id="feedback" 
-      class="feedback m-0 position-absolute small text-danger">${i18nInstance.t(
-        'feedbackRssInvalid',
-      )}</p>`;
+    feedbacEl.classList.add('text-danger');
+    feedbacEl.innerText = i18nInstance.t('feedbackRssInvalid');
+
+    // feedbackWrapperEl.innerHTML = `
+    // <p id="feedback"
+    //   class="feedback m-0 position-absolute small text-danger">${i18nInstance.t(
+    //     'feedbackRssInvalid',
+    //   )}</p>`;
     input.value = '';
   }
   if (watchedState.formState === 'parsing_error') {
     btnAdd.removeAttribute('disabled');
     input.removeAttribute('disabled');
     input.classList.remove('is-invalid');
-    feedbackWrapperEl.innerHTML = `
-    <p id="feedback" 
-      class="feedback m-0 position-absolute small text-danger">${i18nInstance.t(
-        'feedbackparsingError',
-      )}</p>`;
+    feedbacEl.classList.add('text-danger');
+    feedbacEl.innerText = i18nInstance.t('feedbackparsingError');
+
+    // feedbackWrapperEl.innerHTML = `
+    // <p id="feedback"
+    //   class="feedback m-0 position-absolute small text-danger">${i18nInstance.t(
+    //     'feedbackparsingError',
+    //   )}</p>`;
     input.value = '';
   }
   if (watchedState.formState === 'submitted') {
     btnAdd.removeAttribute('disabled');
     input.removeAttribute('disabled');
     input.classList.remove('is-invalid');
-    feedbackWrapperEl.innerHTML = `
-    <p id="feedback"
-      class="feedback m-0 position-absolute small text-success">${i18nInstance.t(
-        'feedbackSubmitted',
-      )}</p>`;
-    input.value = 'APOUUUUUUUU';
+    feedbacEl.classList.add('text-success');
+    feedbacEl.classList.remove('text-danger');
+    feedbacEl.innerText = i18nInstance.t('feedbackSubmitted');
+
+    // feedbackWrapperEl.innerHTML = `
+    // <p id="feedback"
+    //   class="feedback m-0 position-absolute small text-success">${i18nInstance.t(
+    //     'feedbackSubmitted',
+    //   )}</p>`;
+    input.value = '';
     // btnAdd.disabled = false;
     // input.disabled = false;
     // input.classList.remove('is-invalid');
@@ -110,11 +135,14 @@ export const renderForm = (watchedState) => {
     btnAdd.removeAttribute('disabled');
     input.removeAttribute('disabled');
     input.classList.remove('is-invalid');
-    feedbackWrapperEl.innerHTML = `
-    <p id="feedback" 
-      class="feedback m-0 position-absolute small text-danger">${i18nInstance.t(
-        'feedbackNetworkError',
-      )}</p>`;
+    feedbacEl.classList.add('text-danger');
+    feedbacEl.innerText = i18nInstance.t('feedbackNetworkError');
+
+    // feedbackWrapperEl.innerHTML = `
+    // <p id="feedback"
+    //   class="feedback m-0 position-absolute small text-danger">${i18nInstance.t(
+    //     'feedbackNetworkError',
+    //   )}</p>`;
     input.value = '';
   }
 };
