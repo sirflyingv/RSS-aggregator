@@ -15,7 +15,7 @@ export const renderForm = (watchedState) => {
   headerTextEl.innerText = i18nInstance.t('header');
   leadEl.innerText = i18nInstance.t('lead');
   sampleEl.innerText = i18nInstance.t('sample');
-  btnAdd.value = i18nInstance.t('buttonText');
+  btnAdd.innerText = i18nInstance.t('buttonText');
   input.placeholder = i18nInstance.t('placeholder');
 
   if (watchedState.formState === 'filling') {
