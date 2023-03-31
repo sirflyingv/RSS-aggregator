@@ -9,7 +9,7 @@ const form = document.querySelector('form');
 const input = document.querySelector('#url-input');
 const label = document.querySelector('label');
 // const feedbackWrapperEl = document.querySelector('#feedback-wrapper');
-const feedbacEl = document.querySelector('#feedback');
+const feedback = document.querySelector('#feedback');
 
 export const renderForm = (watchedState) => {
   label.innerText = i18nInstance.t('label');
@@ -21,7 +21,7 @@ export const renderForm = (watchedState) => {
 
   if (watchedState.formState === 'filling') {
     input.classList.remove('is-invalid');
-    feedbacEl.innerText = i18nInstance.t('feedbackFilling');
+    feedback.innerText = i18nInstance.t('feedbackFilling');
 
     // feedbackWrapperEl.innerHTML = `
     // <p id="feedback" class="feedback m-0 position-absolute small">${i18nInstance.t(
@@ -30,8 +30,8 @@ export const renderForm = (watchedState) => {
   }
   if (watchedState.formState === 'no_input') {
     // input.classList.add('is-invalid');
-    feedbacEl.classList.add('text-danger');
-    feedbacEl.innerText = i18nInstance.t('feedbackNoInput');
+    feedback.classList.add('text-danger');
+    feedback.innerText = i18nInstance.t('feedbackNoInput');
 
     // feedbackWrapperEl.innerHTML = `
     //   <p id="feedback" class="feedback m-0 position-absolute small text-danger">${i18nInstance.t(
@@ -40,8 +40,8 @@ export const renderForm = (watchedState) => {
   }
   if (watchedState.formState === 'invalid') {
     input.classList.add('is-invalid');
-    feedbacEl.classList.add('text-danger');
-    feedbacEl.innerText = i18nInstance.t('feedbackInvalid');
+    feedback.classList.add('text-danger');
+    feedback.innerText = i18nInstance.t('feedbackInvalid');
 
     // feedbackWrapperEl.innerHTML = `
     //   <p id="feedback" class="feedback m-0 position-absolute small text-danger">${i18nInstance.t(
@@ -50,8 +50,8 @@ export const renderForm = (watchedState) => {
   }
   if (watchedState.formState === 'not_unique') {
     input.classList.add('is-invalid');
-    feedbacEl.classList.add('text-danger');
-    feedbacEl.innerText = i18nInstance.t('feedbackNotUnique');
+    feedback.classList.add('text-danger');
+    feedback.innerText = i18nInstance.t('feedbackNotUnique');
 
     // feedbackWrapperEl.innerHTML = `
     // <p id="feedback" class="feedback m-0 position-absolute small text-danger">${i18nInstance.t(
@@ -62,8 +62,9 @@ export const renderForm = (watchedState) => {
     btnAdd.setAttribute('disabled', true);
     input.setAttribute('disabled', true);
     input.classList.remove('is-invalid');
-    feedbacEl.classList.remove('text-danger');
-    // feedbacEl.innerText = i18nInstance.t('feedbackAwaiting');
+    feedback.classList.remove('text-danger');
+    // feedback.innerText = '';
+    feedback.innerText = i18nInstance.t('feedbackAwaiting');
 
     // feedbackWrapperEl.innerHTML = `
     // <p id="feedback"
@@ -76,8 +77,8 @@ export const renderForm = (watchedState) => {
     btnAdd.removeAttribute('disabled');
     input.removeAttribute('disabled');
     input.classList.remove('is-invalid');
-    feedbacEl.classList.add('text-danger');
-    feedbacEl.innerText = i18nInstance.t('feedbackRssInvalid');
+    feedback.classList.add('text-danger');
+    feedback.innerText = i18nInstance.t('feedbackRssInvalid');
 
     // feedbackWrapperEl.innerHTML = `
     // <p id="feedback"
@@ -90,8 +91,8 @@ export const renderForm = (watchedState) => {
     btnAdd.removeAttribute('disabled');
     input.removeAttribute('disabled');
     input.classList.remove('is-invalid');
-    feedbacEl.classList.add('text-danger');
-    feedbacEl.innerText = i18nInstance.t('feedbackparsingError');
+    feedback.classList.add('text-danger');
+    feedback.innerText = i18nInstance.t('feedbackparsingError');
 
     // feedbackWrapperEl.innerHTML = `
     // <p id="feedback"
@@ -104,9 +105,9 @@ export const renderForm = (watchedState) => {
     btnAdd.removeAttribute('disabled');
     input.removeAttribute('disabled');
     input.classList.remove('is-invalid');
-    feedbacEl.classList.add('text-success');
-    feedbacEl.classList.remove('text-danger');
-    feedbacEl.innerText = i18nInstance.t('feedbackSubmitted');
+    feedback.classList.add('text-success');
+    feedback.classList.remove('text-danger');
+    feedback.innerText = i18nInstance.t('feedbackSubmitted');
     input.value = '';
 
     // feedbackWrapperEl.innerHTML = `
@@ -135,15 +136,15 @@ export const renderForm = (watchedState) => {
     btnAdd.removeAttribute('disabled');
     input.removeAttribute('disabled');
     input.classList.remove('is-invalid');
-    feedbacEl.classList.add('text-danger');
-    feedbacEl.innerText = i18nInstance.t('feedbackNetworkError');
+    feedback.classList.add('text-danger');
+    feedback.innerText = i18nInstance.t('feedbackNetworkError');
+    input.value = '';
 
     // feedbackWrapperEl.innerHTML = `
     // <p id="feedback"
     //   class="feedback m-0 position-absolute small text-danger">${i18nInstance.t(
     //     'feedbackNetworkError',
     //   )}</p>`;
-    input.value = '';
   }
 };
 
