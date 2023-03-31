@@ -21,23 +21,23 @@ export const renderForm = (watchedState) => {
   if (watchedState.formState === 'filling') {
     input.classList.remove('is-invalid');
     feedbackWrapperEl.innerHTML = `
-    <p id="feedback" class="feedback m-0 position-absolute small">
-      ${i18nInstance.t('feedbackFilling')}
-    </p>`;
+    <p id="feedback" class="feedback m-0 position-absolute small">${i18nInstance.t(
+      'feedbackFilling',
+    )}</p>`;
   }
   if (watchedState.formState === 'invalid') {
     input.classList.add('is-invalid');
     feedbackWrapperEl.innerHTML = `
-      <p id="feedback" class="feedback m-0 position-absolute small text-danger">
-      ${i18nInstance.t('feedbackInvalid')}
-      </p>`;
+      <p id="feedback" class="feedback m-0 position-absolute small text-danger">${i18nInstance.t(
+        'feedbackInvalid',
+      )}</p>`;
   }
   if (watchedState.formState === 'not_unique') {
     input.classList.add('is-invalid');
     feedbackWrapperEl.innerHTML = `
-    <p id="feedback" class="feedback m-0 position-absolute small text-danger">
-    ${i18nInstance.t('feedbackNotUnique')}
-    </p>`;
+    <p id="feedback" class="feedback m-0 position-absolute small text-danger">${i18nInstance.t(
+      'feedbackNotUnique',
+    )}</p>`;
   }
   if (watchedState.formState === 'awaiting') {
     btnAdd.setAttribute('disabled', true);
@@ -45,9 +45,9 @@ export const renderForm = (watchedState) => {
     input.classList.remove('is-invalid');
     feedbackWrapperEl.innerHTML = `
     <p id="feedback" 
-      class="feedback m-0 position-absolute small">
-      ${i18nInstance.t('feedbackAwaiting')}
-    </p>`;
+      class="feedback m-0 position-absolute small">${i18nInstance.t(
+        'feedbackAwaiting',
+      )}</p>`;
     input.value = '';
   }
   if (watchedState.formState === 'invalid_rss') {
@@ -56,9 +56,9 @@ export const renderForm = (watchedState) => {
     input.classList.remove('is-invalid');
     feedbackWrapperEl.innerHTML = `
     <p id="feedback" 
-      class="feedback m-0 position-absolute small text-danger">
-      ${i18nInstance.t('feedbackRssInvalid')}
-    </p>`;
+      class="feedback m-0 position-absolute small text-danger">${i18nInstance.t(
+        'feedbackRssInvalid',
+      )}</p>`;
     input.value = '';
   }
   if (watchedState.formState === 'submitted') {
