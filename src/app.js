@@ -9,7 +9,7 @@ import * as yup from 'yup';
 import locales from './locales/index.js';
 import _ from 'lodash';
 
-import { getRssData, rssParser, inputSchema } from './helpers.js';
+import { getRssData, rssParser } from './helpers.js';
 
 import { addFormInputHandler, renderForm } from './Views/formView';
 import {
