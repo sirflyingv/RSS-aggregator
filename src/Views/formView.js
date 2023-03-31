@@ -103,7 +103,7 @@ export const renderForm = (watchedState) => {
       'small',
       'text-success',
     );
-    feedbackEl.textContent = 'RSS успешно загружен';
+    feedbackEl.innerText = 'RSS успешно загружен';
     feedbackWrapperEl.innerHTML = '';
     feedbackWrapperEl.appendChild(feedbackEl);
   }
