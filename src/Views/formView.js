@@ -65,12 +65,15 @@ export const renderForm = (watchedState) => {
     // This when rss file successfully downloaded
     btnAdd.removeAttribute('disabled');
     input.removeAttribute('disabled');
-    // input.classList.remove('is-invalid');
+    input.classList.remove('is-invalid');
+    // feedbackWrapperEl.innerHTML = `
+    // <p id="feedback"
+    //   class="feedback m-0 position-absolute small text-success">${i18nInstance.t(
+    //     'feedbackSubmitted',
+    //   )}</p>`;
     feedbackWrapperEl.innerHTML = `
     <p id="feedback" 
-      class="feedback m-0 position-absolute small text-success">${i18nInstance.t(
-        'feedbackSubmitted',
-      )}</p>`;
+      class="feedback m-0 position-absolute small text-success">RSS успешно загружен</p>`;
     input.value = '';
   }
 };
