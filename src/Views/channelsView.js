@@ -1,8 +1,7 @@
 /* eslint-disable no-tabs */
-import { i18nInstance } from '../app';
 const channelsEl = document.querySelector('.feeds');
 
-export default (watchedState) => {
+export default (watchedState, i18nInstance) => {
   channelsEl.innerHTML = `
 	<div class="card border-0">
 	  <div class="card-body">

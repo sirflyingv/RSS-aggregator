@@ -8,7 +8,7 @@ import i18n from 'i18next';
 import * as yup from 'yup';
 import locales from './locales/index.js';
 
-import { UPDATE_INTERVAL } from './config.js';
+import { UPDATE_INTERVAL, DEFAULT_LANG } from './config.js';
 import { composeProxifiedUrl, xmlToJson, normalizeRssJson } from './helpers.js';
 
 import { addFormInputHandler, renderForm } from './Views/formView';
@@ -21,26 +21,13 @@ const { ru } = locales;
 
 export const app = () => {
   // Model
-  const defaultLang = 'ru';
-
-  // const initialState = {
-  //   links: [],
-  //   channels: [],
-  //   posts: [],
-  //   uiState: {
-  //     lang: 'ru',
-  //     modalPost: {},
-  //     readPosts: [],
-  //   },
-  //   formState: 'loading',
-  // };
 
   const state = {
     links: [],
     channels: [],
     posts: [],
     uiState: {
-      lang: defaultLang,
+      lang: DEFAULT_LANG,
       modalPost: {},
       readPosts: [],
     },
@@ -48,11 +35,11 @@ export const app = () => {
   };
 
   const watchedState = onChange(state, () => {
-    renderForm(watchedState);
-    renderModal(watchedState);
+    renderForm(watchedState, i18nInstance);
+    renderModal(watchedState, i18nInstance);
     if (watchedState.channels.length > 0) {
-      renderChannels(watchedState);
-      renderPosts(watchedState);
+      renderChannels(watchedState, i18nInstance);
+      renderPosts(watchedState, i18nInstance);
     }
   });
 
@@ -77,7 +64,7 @@ export const app = () => {
     })
     .trim()
     .url((err) => {
-      watchedState.formState = 'invalid';
+      watchedState.formState = 'invalid_URL';
       return `The value ${err.value} is not a valid URL.`;
     })
     .test(
@@ -114,20 +101,12 @@ export const app = () => {
       })
       .then((contents) => {
         const json = xmlToJson(contents);
-        console.log(json);
+        // should be rss structure validation?
         if (!_.has(json, 'rss')) {
-          watchedState.formState = 'parsing_error';
+          watchedState.formState = 'invalid_rss';
           throw new Error('XML document is not RSS');
         }
         const normalizedRss = normalizeRssJson(json);
-        // else {
-        //   watchedState.links.push(inputLink); // higher level argument
-        //   const { channel, posts } = rss;
-        //   watchedState.channels.push(channel);
-        //   watchedState.posts.push(...posts.reverse());
-        //   // sort the posts?
-        //   watchedState.formState = 'submitted';
-        // }
         return normalizedRss;
       })
       .then((rss) => {

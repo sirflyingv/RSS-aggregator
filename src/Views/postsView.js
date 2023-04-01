@@ -1,9 +1,7 @@
 /* eslint-disable no-tabs */
-import { i18nInstance } from '../app';
-
 const postsEl = document.querySelector('.posts');
 
-export const renderPosts = (watchedState) => {
+export const renderPosts = (watchedState, i18nInstance) => {
   postsEl.innerHTML = `
 		<div class="card border-0">
 		  <div class="card-body">

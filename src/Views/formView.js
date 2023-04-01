@@ -1,5 +1,3 @@
-import { i18nInstance } from '../app';
-
 const headerTextEl = document.querySelector('#header-text');
 const leadEl = document.querySelector('#lead');
 const sampleEl = document.querySelector('#sample');
@@ -9,7 +7,7 @@ const input = document.querySelector('#url-input');
 const label = document.querySelector('label');
 const feedback = document.querySelector('#feedback');
 
-export const renderForm = (watchedState) => {
+export const renderForm = (watchedState, i18nInstance) => {
   label.innerText = i18nInstance.t('label');
   headerTextEl.innerText = i18nInstance.t('header');
   leadEl.innerText = i18nInstance.t('lead');
@@ -22,12 +20,11 @@ export const renderForm = (watchedState) => {
     feedback.innerText = i18nInstance.t('feedbackFilling');
   }
   if (watchedState.formState === 'no_input') {
-    // input.classList.add('is-invalid');
     feedback.classList.add('text-danger');
     feedback.innerText = i18nInstance.t('feedbackNoInput');
   }
 
-  if (watchedState.formState === 'invalid') {
+  if (watchedState.formState === 'invalid_URL') {
     input.classList.add('is-invalid');
     feedback.classList.add('text-danger');
     feedback.innerText = i18nInstance.t('feedbackInvalid');
@@ -51,15 +48,6 @@ export const renderForm = (watchedState) => {
     input.classList.remove('is-invalid');
     feedback.classList.add('text-danger');
     feedback.innerText = i18nInstance.t('feedbackRssInvalid');
-
-    input.value = '';
-  }
-  if (watchedState.formState === 'parsing_error') {
-    btnAdd.removeAttribute('disabled');
-    input.removeAttribute('disabled');
-    input.classList.remove('is-invalid');
-    feedback.classList.add('text-danger');
-    feedback.innerText = i18nInstance.t('feedbackParsingError');
 
     input.value = '';
   }
