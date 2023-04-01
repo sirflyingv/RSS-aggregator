@@ -13,7 +13,8 @@ export default {
     feedbackAwaitingHollow: '',
     feedbackSubmitted: 'RSS успешно загружен',
     feedbackNotUnique: 'RSS уже существует',
-    feedbackparsingError: 'Не удалось прочесть документ',
+    feedbackParsingError: 'Ресурс не содержит валидный RSS',
+    // feedbackParsingError: 'Не удалось прочесть документ', // original
     feedbackFilling: '',
     postsHeader: 'Посты',
     channelsHeader: 'Фиды',

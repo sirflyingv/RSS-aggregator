@@ -92,7 +92,7 @@ export const renderForm = (watchedState) => {
     input.removeAttribute('disabled');
     input.classList.remove('is-invalid');
     feedback.classList.add('text-danger');
-    feedback.innerText = i18nInstance.t('feedbackparsingError');
+    feedback.innerText = i18nInstance.t('feedbackParsingError');
 
     // feedbackWrapperEl.innerHTML = `
     // <p id="feedback"
