@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import { i18nInstance } from '../app';
 
 const headerTextEl = document.querySelector('#header-text');
@@ -8,7 +7,6 @@ const btnAdd = document.querySelector('#button-add');
 const form = document.querySelector('form');
 const input = document.querySelector('#url-input');
 const label = document.querySelector('label');
-// const feedbackWrapperEl = document.querySelector('#feedback-wrapper');
 const feedback = document.querySelector('#feedback');
 
 export const renderForm = (watchedState) => {
@@ -22,41 +20,22 @@ export const renderForm = (watchedState) => {
   if (watchedState.formState === 'filling') {
     input.classList.remove('is-invalid');
     feedback.innerText = i18nInstance.t('feedbackFilling');
-
-    // feedbackWrapperEl.innerHTML = `
-    // <p id="feedback" class="feedback m-0 position-absolute small">${i18nInstance.t(
-    //   'feedbackFilling',
-    // )}</p>`;
   }
   if (watchedState.formState === 'no_input') {
     // input.classList.add('is-invalid');
     feedback.classList.add('text-danger');
     feedback.innerText = i18nInstance.t('feedbackNoInput');
-
-    // feedbackWrapperEl.innerHTML = `
-    //   <p id="feedback" class="feedback m-0 position-absolute small text-danger">${i18nInstance.t(
-    //     'feedbackNoInput',
-    //   )}</p>`;
   }
+
   if (watchedState.formState === 'invalid') {
     input.classList.add('is-invalid');
     feedback.classList.add('text-danger');
     feedback.innerText = i18nInstance.t('feedbackInvalid');
-
-    // feedbackWrapperEl.innerHTML = `
-    //   <p id="feedback" class="feedback m-0 position-absolute small text-danger">${i18nInstance.t(
-    //     'feedbackInvalid',
-    //   )}</p>`;
   }
   if (watchedState.formState === 'not_unique') {
     input.classList.add('is-invalid');
     feedback.classList.add('text-danger');
     feedback.innerText = i18nInstance.t('feedbackNotUnique');
-
-    // feedbackWrapperEl.innerHTML = `
-    // <p id="feedback" class="feedback m-0 position-absolute small text-danger">${i18nInstance.t(
-    //   'feedbackNotUnique',
-    // )}</p>`;
   }
   if (watchedState.formState === 'awaiting') {
     btnAdd.setAttribute('disabled', true);
@@ -65,13 +44,6 @@ export const renderForm = (watchedState) => {
     feedback.classList.remove('text-danger');
     feedback.innerText = i18nInstance.t('feedbackAwaitingHollow');
     // feedback.innerText = `${JSON.stringify(watchedState)}`;
-
-    // feedbackWrapperEl.innerHTML = `
-    // <p id="feedback"
-    //   class="feedback m-0 position-absolute small">${i18nInstance.t(
-    //     'feedbackAwaiting',
-    //   )}</p>`;
-    // input.value = '';
   }
   if (watchedState.formState === 'invalid_rss') {
     btnAdd.removeAttribute('disabled');
@@ -80,11 +52,6 @@ export const renderForm = (watchedState) => {
     feedback.classList.add('text-danger');
     feedback.innerText = i18nInstance.t('feedbackRssInvalid');
 
-    // feedbackWrapperEl.innerHTML = `
-    // <p id="feedback"
-    //   class="feedback m-0 position-absolute small text-danger">${i18nInstance.t(
-    //     'feedbackRssInvalid',
-    //   )}</p>`;
     input.value = '';
   }
   if (watchedState.formState === 'parsing_error') {
@@ -94,11 +61,6 @@ export const renderForm = (watchedState) => {
     feedback.classList.add('text-danger');
     feedback.innerText = i18nInstance.t('feedbackParsingError');
 
-    // feedbackWrapperEl.innerHTML = `
-    // <p id="feedback"
-    //   class="feedback m-0 position-absolute small text-danger">${i18nInstance.t(
-    //     'feedbackparsingError',
-    //   )}</p>`;
     input.value = '';
   }
   if (watchedState.formState === 'submitted') {
@@ -109,28 +71,6 @@ export const renderForm = (watchedState) => {
     feedback.classList.remove('text-danger');
     feedback.innerText = i18nInstance.t('feedbackSubmitted');
     input.value = '';
-
-    // feedbackWrapperEl.innerHTML = `
-    // <p id="feedback"
-    //   class="feedback m-0 position-absolute small text-success">${i18nInstance.t(
-    //     'feedbackSubmitted',
-    //   )}</p>`;
-    // btnAdd.disabled = false;
-    // input.disabled = false;
-    // input.classList.remove('is-invalid');
-    // input.value = '';
-    // const feedbackEl = document.createElement('p');
-    // feedbackEl.id = 'feedback';
-    // feedbackEl.classList.add(
-    //   'feedback',
-    //   'm-0',
-    //   'position-absolute',
-    //   'small',
-    //   'text-success',
-    // );
-    // feedbackEl.innerText = 'RSS успешно загружен';
-    // feedbackWrapperEl.innerHTML = '';
-    // feedbackWrapperEl.appendChild(feedbackEl);
   }
   if (watchedState.formState === 'network_error') {
     btnAdd.removeAttribute('disabled');
@@ -139,12 +79,6 @@ export const renderForm = (watchedState) => {
     feedback.classList.add('text-danger');
     feedback.innerText = i18nInstance.t('feedbackNetworkError');
     input.value = '';
-
-    // feedbackWrapperEl.innerHTML = `
-    // <p id="feedback"
-    //   class="feedback m-0 position-absolute small text-danger">${i18nInstance.t(
-    //     'feedbackNetworkError',
-    //   )}</p>`;
   }
 };
 

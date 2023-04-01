@@ -1,4 +1,4 @@
-import _ from 'lodash';
+/* eslint-disable no-tabs */
 import { i18nInstance } from '../app';
 
 const postsEl = document.querySelector('.posts');
@@ -14,9 +14,7 @@ export const renderPosts = (watchedState) => {
   const postsUl = postsEl.querySelector('ul');
 
   watchedState.posts.forEach((post) => {
-    const isRead = watchedState.uiState.readPosts.some(
-      (readPost) => readPost.link === post.link,
-    );
+    const isRead = watchedState.uiState.readPosts.some((readPost) => readPost.link === post.link);
     const postlHTML = `
 		  <li
 		  class="list-group-item d-flex justify-content-between align-items-start border-0 border-end-0">
