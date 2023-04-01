@@ -77,10 +77,10 @@ export const app = () => {
     inputSchema
       .validate(inputLink)
       .then((validLink) => {
-        watchedState.formState = 'awaiting';
         watchedState.links.push(validLink); // in last then
-
-        return getRssData(validLink);
+        const responsePromise = getRssData(validLink);
+        watchedState.formState = 'awaiting';
+        return responsePromise;
       })
       .then((response) => {
         if (response.data.status.http_code !== 200) {
