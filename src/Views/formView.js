@@ -58,20 +58,21 @@ export const renderForm = (watchedState) => {
     //   'feedbackNotUnique',
     // )}</p>`;
   }
-  // if (watchedState.formState === 'awaiting') {
-  //   btnAdd.setAttribute('disabled', true);
-  //   input.setAttribute('disabled', true);
-  //   input.classList.remove('is-invalid');
-  //   feedback.classList.remove('text-danger');
-  //   feedback.innerText = i18nInstance.t('feedbackAwaiting');
+  if (watchedState.formState === 'awaiting') {
+    btnAdd.setAttribute('disabled', true);
+    input.setAttribute('disabled', true);
+    input.classList.remove('is-invalid');
+    feedback.classList.remove('text-danger');
+    // feedback.innerText = i18nInstance.t('feedbackAwaiting');
+    feedback.innerText = i18nInstance.t('feedbackAwaitingHollow');
 
-  //   // feedbackWrapperEl.innerHTML = `
-  //   // <p id="feedback"
-  //   //   class="feedback m-0 position-absolute small">${i18nInstance.t(
-  //   //     'feedbackAwaiting',
-  //   //   )}</p>`;
-  //   // input.value = '';
-  // }
+    // feedbackWrapperEl.innerHTML = `
+    // <p id="feedback"
+    //   class="feedback m-0 position-absolute small">${i18nInstance.t(
+    //     'feedbackAwaiting',
+    //   )}</p>`;
+    // input.value = '';
+  }
   if (watchedState.formState === 'invalid_rss') {
     btnAdd.removeAttribute('disabled');
     input.removeAttribute('disabled');

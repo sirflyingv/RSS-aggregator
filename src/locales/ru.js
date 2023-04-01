@@ -10,6 +10,7 @@ export default {
     feedbackRssInvalid: 'Ресурс не содержит валидный RSS',
     feedbackNetworkError: 'Ошибка сети',
     feedbackAwaiting: 'Загружается...',
+    feedbackAwaitingHollow: '',
     feedbackSubmitted: 'RSS успешно загружен',
     feedbackNotUnique: 'RSS уже существует',
     feedbackparsingError: 'Не удалось прочесть документ',
