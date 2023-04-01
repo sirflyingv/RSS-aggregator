@@ -7,7 +7,6 @@ export function composeProxifiedUrl(url) {
 }
 
 const xmlToJsonParser = new XMLParser();
-
 export const xmlToJson = (xml) => xmlToJsonParser.parse(xml);
 
 export const normalizeRssJson = (json) => {

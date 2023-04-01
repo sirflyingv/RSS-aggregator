@@ -92,18 +92,6 @@ export const app = () => {
       },
     );
 
-  const rssSchema = yup.object().shape({
-    title: yup.string().required(),
-    description: yup.string().required(),
-    items: yup.array().of(
-      yup.object().shape({
-        title: yup.string().required(),
-        link: yup.string().url().required(),
-        description: yup.string().required(),
-      }),
-    ),
-  });
-
   // controller
   const handleFormInput = (inputLink) => {
     inputSchema

@@ -1,3 +1,4 @@
+/* eslint-disable no-tabs */
 import { i18nInstance } from '../app';
 const channelsEl = document.querySelector('.feeds');
 
