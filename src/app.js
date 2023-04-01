@@ -9,7 +9,7 @@ import * as yup from 'yup';
 import locales from './locales/index.js';
 
 import { UPDATE_INTERVAL } from './config.js';
-import { composeProxifiedUrl, rssParser } from './helpers.js';
+import { composeProxifiedUrl, xmlToJson, normalizeRssJson } from './helpers.js';
 
 import { addFormInputHandler, renderForm } from './Views/formView';
 import { renderPosts, addShowButtonHandler, addLinkHandler } from './Views/postsView';
@@ -92,22 +92,30 @@ export const app = () => {
       },
     );
 
+  const rssSchema = yup.object().shape({
+    title: yup.string().required(),
+    description: yup.string().required(),
+    items: yup.array().of(
+      yup.object().shape({
+        title: yup.string().required(),
+        link: yup.string().url().required(),
+        description: yup.string().required(),
+      }),
+    ),
+  });
+
   // controller
   const handleFormInput = (inputLink) => {
     inputSchema
       .validate(inputLink)
       .then((validLink) => {
-        watchedState.links.push(validLink); // in last then
+        // watchedState.links.push(validLink); // in last then
         const proxifiedUrl = composeProxifiedUrl(validLink);
         const responsePromise = axios.get(proxifiedUrl);
         watchedState.formState = 'awaiting';
         return responsePromise;
       })
       .then((response) => {
-        console.log('response->', response);
-        console.log('data->', response.data);
-        console.log('status->', response.data.status);
-
         if (!response.data.contents) {
           watchedState.formState = 'invalid_rss';
           throw new Error(
@@ -117,18 +125,30 @@ export const app = () => {
         return response.data.contents;
       })
       .then((contents) => {
-        const rss = rssParser(contents);
-        if (!rss) {
+        const json = xmlToJson(contents);
+        console.log(json);
+        if (!_.has(json, 'rss')) {
           watchedState.formState = 'parsing_error';
           throw new Error('XML document is not RSS');
-        } else {
-          // watchedState.links.push(inputLink); // higher level argument
-          const { channel, posts } = rss;
-          watchedState.channels.push(channel);
-          watchedState.posts.push(...posts.reverse());
-          // sort the posts?
-          watchedState.formState = 'submitted';
         }
+        const normalizedRss = normalizeRssJson(json);
+        // else {
+        //   watchedState.links.push(inputLink); // higher level argument
+        //   const { channel, posts } = rss;
+        //   watchedState.channels.push(channel);
+        //   watchedState.posts.push(...posts.reverse());
+        //   // sort the posts?
+        //   watchedState.formState = 'submitted';
+        // }
+        return normalizedRss;
+      })
+      .then((rss) => {
+        watchedState.links.push(inputLink); // higher level argument
+        const { channel, posts } = rss;
+        watchedState.channels.push(channel);
+        watchedState.posts.push(...posts.reverse());
+        // sort the posts?
+        watchedState.formState = 'submitted';
       })
       .catch((err) => {
         if (err.code === 'ERR_NETWORK') watchedState.formState = 'network_error';
@@ -161,7 +181,9 @@ export const app = () => {
             return response.data.contents;
           })
           .then((data) => {
-            const updatedPosts = rssParser(data).posts;
+            const json = xmlToJson(data);
+            const normalizedRss = normalizeRssJson(json);
+            const updatedPosts = normalizedRss.posts;
             function isNewPostFresh(post) {
               return !watchedState.posts.some((loadedPost) => _.isEqual(loadedPost, post));
             }
