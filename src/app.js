@@ -85,7 +85,10 @@ export const app = () => {
         return responsePromise;
       })
       .then((response) => {
-        console.log('hola!!!', response.data);
+        console.log('response->', response);
+        console.log('data->', response.data);
+        console.log('status->', response.data.status);
+
         if (response.data.status.http_code !== 200) {
           watchedState.formState = 'invalid_rss';
           throw new Error(
