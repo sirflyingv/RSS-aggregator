@@ -78,7 +78,7 @@ export const app = () => {
       .validate(inputLink)
       .then((validLink) => {
         watchedState.formState = 'awaiting';
-        // watchedState.links.push(validLink); // in last then
+        watchedState.links.push(validLink); // in last then
 
         return getRssData(validLink);
       })
@@ -99,7 +99,7 @@ export const app = () => {
           watchedState.formState = 'parsing_error';
           throw new Error('XML document is not RSS');
         } else {
-          watchedState.links.push(inputLink); // higher level argument
+          // watchedState.links.push(inputLink); // higher level argument
           const { channel, posts } = rss;
           watchedState.channels.push(channel);
           watchedState.posts.push(...posts.reverse());
