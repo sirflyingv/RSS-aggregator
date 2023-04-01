@@ -4,7 +4,7 @@ import { ORIGIN_PROXY_URL, ORIGIN_PROXY_PARAMETERS } from './config.js';
 
 export function getRssData(url) {
   return axios.get(
-    `${ORIGIN_PROXY_URL}}${ORIGIN_PROXY_PARAMETERS}&url=${encodeURIComponent(url)}`,
+    `${ORIGIN_PROXY_URL}${ORIGIN_PROXY_PARAMETERS}&url=${encodeURIComponent(url)}`,
   );
 }
 
