@@ -89,15 +89,13 @@ export const app = () => {
         console.log('data->', response.data);
         console.log('status->', response.data.status);
 
-        if (response.data.status.http_code !== 200) {
+        if (!response.data.contents) {
           watchedState.formState = 'invalid_rss';
           throw new Error(
-            `Could not get RSS from ${response.data.status.url}. Source status: ${response.data.status.http_code}`,
+            `Could not get RSS from ${response.data.status.url}. Source status: ${response.data}`,
           );
         }
-        if (response.data.status.http_code === 200) {
-          return response.data.contents;
-        }
+        return response.data.contents;
       })
       .then((contents) => {
         const rss = rssParser(contents);
