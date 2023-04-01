@@ -3,9 +3,12 @@ import { XMLParser } from 'fast-xml-parser';
 import { ORIGIN_PROXY_URL, ORIGIN_PROXY_PARAMETERS } from './config.js';
 
 export function getRssData(url) {
-  return axios.get(
-    `${ORIGIN_PROXY_URL}${ORIGIN_PROXY_PARAMETERS}&url=${encodeURIComponent(url)}`,
-  );
+  const fullUrl = `${ORIGIN_PROXY_URL}${ORIGIN_PROXY_PARAMETERS}&url=${encodeURIComponent(
+    url,
+  )}`;
+
+  console.log(fullUrl);
+  return axios.get(fullUrl);
 }
 
 export function rssParser(xml) {

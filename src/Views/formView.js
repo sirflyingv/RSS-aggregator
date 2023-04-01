@@ -64,7 +64,7 @@ export const renderForm = (watchedState) => {
     input.classList.remove('is-invalid');
     feedback.classList.remove('text-danger');
     // feedback.innerText = i18nInstance.t('feedbackAwaiting');
-    feedback.innerText = `${JSON.stringify(watchedState)}`;
+    // feedback.innerText = `${JSON.stringify(watchedState)}`;
 
     // feedbackWrapperEl.innerHTML = `
     // <p id="feedback"
