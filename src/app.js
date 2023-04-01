@@ -8,8 +8,9 @@ import i18n from 'i18next';
 import * as yup from 'yup';
 import locales from './locales/index.js';
 import _ from 'lodash';
+import axios from 'axios';
 
-import { getRssData, rssParser } from './helpers.js';
+import { composeProxifiedUrl, rssParser } from './helpers.js';
 
 import { addFormInputHandler, renderForm } from './Views/formView';
 import {
@@ -78,7 +79,8 @@ export const app = () => {
       .validate(inputLink)
       .then((validLink) => {
         watchedState.links.push(validLink); // in last then
-        const responsePromise = getRssData(validLink);
+        const proxifiedUrl = composeProxifiedUrl(validLink);
+        const responsePromise = axios.get(proxifiedUrl);
         watchedState.formState = 'awaiting';
         return responsePromise;
       })
@@ -126,7 +128,9 @@ export const app = () => {
   const updateFeed = () => {
     if (watchedState.links.length > 0) {
       watchedState.links.forEach((link) => {
-        getRssData(link)
+        const proxifiedUrl = composeProxifiedUrl(link);
+        axios
+          .get(proxifiedUrl)
           .then((response) => {
             if (response.data.status.http_code !== 200) {
               throw new Error(

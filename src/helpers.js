@@ -1,15 +1,21 @@
-import axios from 'axios';
+// import axios from 'axios';
 import { XMLParser } from 'fast-xml-parser';
 import { ORIGIN_PROXY_URL, ORIGIN_PROXY_PARAMETERS } from './config.js';
 
-export function getRssData(url) {
-  const fullUrl = `${ORIGIN_PROXY_URL}${ORIGIN_PROXY_PARAMETERS}&url=${encodeURIComponent(
+export function composeProxifiedUrl(url) {
+  return `${ORIGIN_PROXY_URL}${ORIGIN_PROXY_PARAMETERS}&url=${encodeURIComponent(
     url,
   )}`;
-
-  console.log(fullUrl);
-  return axios.get(fullUrl);
 }
+
+// export function getRssData(url) {
+//   const fullUrl = `${ORIGIN_PROXY_URL}${ORIGIN_PROXY_PARAMETERS}&url=${encodeURIComponent(
+//     url,
+//   )}`;
+
+//   console.log(fullUrl);
+//   return axios.get(fullUrl);
+// }
 
 export function rssParser(xml) {
   const parser = new XMLParser();
