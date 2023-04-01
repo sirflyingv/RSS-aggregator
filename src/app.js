@@ -27,28 +27,28 @@ export const app = () => {
   // Model
   const defaultLang = 'ru';
 
-  const initialState = {
-    links: [],
-    channels: [],
-    posts: [],
-    uiState: {
-      lang: 'ru',
-      modalPost: {},
-      readPosts: [],
-    },
-    formState: 'loading',
-  };
+  // const initialState = {
+  //   links: [],
+  //   channels: [],
+  //   posts: [],
+  //   uiState: {
+  //     lang: 'ru',
+  //     modalPost: {},
+  //     readPosts: [],
+  //   },
+  //   formState: 'loading',
+  // };
 
   const state = {
     links: [],
     channels: [],
     posts: [],
     uiState: {
-      lang: defaultLang || initialState.uiState.lang,
+      lang: defaultLang,
       modalPost: {},
       readPosts: [],
     },
-    formState: initialState.formState,
+    formState: 'loading',
   };
 
   const watchedState = onChange(state, () => {
@@ -77,17 +77,11 @@ export const app = () => {
     inputSchema
       .validate(inputLink)
       .then((validLink) => {
-        watchedState.formState = 'awaiting';
+        // watchedState.formState = 'awaiting';
         // watchedState.links.push(validLink); // in last then
         return getRssData(validLink);
       })
       .then((response) => {
-        // if (response.data.status.error) {
-        //   watchedState.formState = 'invalid_rss';
-        //   throw new Error(
-        //     `Absolutely nothing on that link ${response.data.status.url}`,
-        //   );
-        // }
         if (response.data.status.http_code !== 200) {
           watchedState.formState = 'invalid_rss';
           throw new Error(
@@ -95,7 +89,6 @@ export const app = () => {
           );
         }
         if (response.data.status.http_code === 200) {
-          // watchedState.formState = 'submitted'; // from next then
           return response.data.contents;
         }
       })
