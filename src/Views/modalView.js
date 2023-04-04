@@ -1,8 +1,4 @@
 /* eslint-disable object-curly-newline */
-// const modalTitle = document.querySelector('.modal-title');
-// const modalBody = document.querySelector('.modal-body');
-// const fullArticleButton = document.querySelector('.full-article');
-// const modalCloseButton = fullArticleButton.nextElementSibling;
 
 export default (watchedState, i18nInstance, elements) => {
   const { modalTitle, modalBody, fullArticleButton, modalCloseButton } = elements;

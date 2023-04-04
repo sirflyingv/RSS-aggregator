@@ -1,5 +1,4 @@
 /* eslint-disable no-tabs */
-// const postsElOLD = document.querySelector('.posts');
 
 export default (watchedState, i18nInstance, elements) => {
   const { posts } = elements;
@@ -38,25 +37,3 @@ export default (watchedState, i18nInstance, elements) => {
     postsUl.insertAdjacentHTML('afterbegin', postlHTML);
   });
 };
-
-// export const addShowButtonHandler = (handler) => {
-//   postsElOLD.addEventListener('click', (e) => {
-//     if (e.target.type !== 'button') return;
-//     const postLink = e.target.previousElementSibling.href;
-//     handler(postLink);
-//   });
-// };
-
-// // not activating links used by context menu IN FACT better by :visited in css
-// export const addLinkHandler = (handler) => {
-//   postsElOLD.addEventListener('click', (e) => {
-//     if (e.target.tagName !== 'A') return;
-//     const postLink = e.target.href;
-//     handler(postLink);
-//   });
-//   postsElOLD.addEventListener('auxclick', (e) => {
-//     if (e.target.tagName !== 'A') return;
-//     const postLink = e.target.href;
-//     handler(postLink);
-//   });
-// };

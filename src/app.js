@@ -20,8 +20,8 @@ const { ru } = locales;
 
 export default () => {
   const i18nInstance = i18n.createInstance();
-  // Model
 
+  // Model
   const state = {
     links: [],
     channels: [],
@@ -42,17 +42,6 @@ export default () => {
     }
   });
 
-  i18nInstance
-    .init({
-      lng: 'ru',
-      resources: {
-        ru,
-      },
-    })
-    .then(() => {
-      watchedState.formState = 'filling';
-    });
-
   // validating url input
   setLocale({
     mixed: {
@@ -72,7 +61,7 @@ export default () => {
   const inputSchema = yup.string().trim().required().url();
 
   // controller
-  const handleFormInput = (inputLink) => {
+  function handleFormInput(inputLink) {
     inputSchema
       .validate(inputLink)
       .then((validLink) => {
@@ -80,7 +69,6 @@ export default () => {
           watchedState.formState = 'not_unique';
           throw new Error(`URL ${validLink} is already added`);
         }
-
         // watchedState.links.push(validLink); // in last then
         const proxifiedUrl = composeProxifiedUrl(validLink);
         const responsePromise = axios.get(proxifiedUrl);
@@ -101,10 +89,9 @@ export default () => {
           watchedState.formState = 'invalid_rss';
           throw new Error('XML document is not RSS');
         }
-        const normalizedRss = normalizeRssJson(json);
 
         watchedState.links.push(inputLink); // higher level argument
-        const { channel, posts } = normalizedRss;
+        const { channel, posts } = normalizeRssJson(json);
         watchedState.channels.push(channel);
         watchedState.posts.push(...posts.reverse());
         // sort the posts?
@@ -114,40 +101,13 @@ export default () => {
         if (err.code === 'ERR_NETWORK') watchedState.formState = 'network_error';
         console.error(err.message);
       });
-  };
+  }
 
-  const handlePostClick = (postLink) => {
+  function handlePostClick(postLink) {
     const chosenPost = watchedState.posts.find((post) => post.link === postLink);
     watchedState.uiState.modalPost = chosenPost;
     watchedState.uiState.readPosts.push(chosenPost);
-  };
-
-  // listeners
-  elements.form.addEventListener('submit', (e) => {
-    e.preventDefault();
-    handleFormInput(elements.input.value);
-  });
-
-  elements.posts.addEventListener('click', (e) => {
-    if (e.target.type !== 'button') return;
-    const postLink = e.target.previousElementSibling.href;
-    handlePostClick(postLink);
-  });
-  elements.posts.addEventListener('click', (e) => {
-    if (e.target.tagName !== 'A') return;
-    const postLink = e.target.href;
-    handlePostClick(postLink);
-  });
-  elements.posts.addEventListener('auxclick', (e) => {
-    if (e.target.tagName !== 'A') return;
-    const postLink = e.target.href;
-    handlePostClick(postLink);
-  });
-
-  // old way
-  // addFormInputHandler(handleFormInput);
-  // addShowButtonHandler(handlePostClick);
-  // addLinkHandler(handlePostClick);
+  }
 
   const updateFeed = () => {
     if (watchedState.links.length > 0) {
@@ -180,6 +140,38 @@ export default () => {
     }
     setTimeout(updateFeed, UPDATE_INTERVAL);
   };
+
+  i18nInstance
+    .init({
+      lng: 'ru',
+      resources: {
+        ru,
+      },
+    })
+    .then(() => {
+      watchedState.formState = 'filling';
+      // listeners
+      elements.form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        handleFormInput(elements.input.value);
+      });
+
+      elements.posts.addEventListener('click', (e) => {
+        if (e.target.type !== 'button') return;
+        const postLink = e.target.previousElementSibling.href;
+        handlePostClick(postLink);
+      });
+      elements.posts.addEventListener('click', (e) => {
+        if (e.target.tagName !== 'A') return;
+        const postLink = e.target.href;
+        handlePostClick(postLink);
+      });
+      elements.posts.addEventListener('auxclick', (e) => {
+        if (e.target.tagName !== 'A') return;
+        const postLink = e.target.href;
+        handlePostClick(postLink);
+      });
+    });
 
   updateFeed();
 };

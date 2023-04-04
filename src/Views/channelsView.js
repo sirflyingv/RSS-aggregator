@@ -1,5 +1,4 @@
 /* eslint-disable no-tabs */
-// const channelsEl = document.querySelector('.feeds');
 
 export default (watchedState, i18nInstance, elements) => {
   const { channels } = elements;
