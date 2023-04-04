@@ -1,17 +1,20 @@
-const headerTextEl = document.querySelector('#header-text');
-const leadEl = document.querySelector('#lead');
-const sampleEl = document.querySelector('#sample');
-const btnAdd = document.querySelector('#button-add');
-const form = document.querySelector('form');
-const input = document.querySelector('#url-input');
-const label = document.querySelector('label');
-const feedback = document.querySelector('#feedback');
+/* eslint-disable object-curly-newline */
 
-export const renderForm = (watchedState, i18nInstance) => {
+// const headerTextEl = document.querySelector('#header-text');
+// const leadEl = document.querySelector('#lead');
+// const sampleEl = document.querySelector('#sample');
+// const btnAdd = document.querySelector('#button-add');
+const formOLD = document.querySelector('form');
+const inputOLD = document.querySelector('#url-input');
+// const label = document.querySelector('label');
+// const feedback = document.querySelector('#feedback');
+
+export const renderForm = (watchedState, i18nInstance, elements) => {
+  const { label, headerText, lead, sample, btnAdd, input, feedback } = elements;
   label.innerText = i18nInstance.t('label');
-  headerTextEl.innerText = i18nInstance.t('header');
-  leadEl.innerText = i18nInstance.t('lead');
-  sampleEl.innerText = i18nInstance.t('sample');
+  headerText.innerText = i18nInstance.t('header');
+  lead.innerText = i18nInstance.t('lead');
+  sample.innerText = i18nInstance.t('sample');
   btnAdd.innerText = i18nInstance.t('buttonText');
   input.placeholder = i18nInstance.t('placeholder');
 
@@ -20,7 +23,7 @@ export const renderForm = (watchedState, i18nInstance) => {
     feedback.innerText = i18nInstance.t('feedbackFilling');
   }
   if (watchedState.formState === 'no_input') {
-    feedback.classList.add('text-danger');
+    feedback.classList.add('text-danger'); //
     feedback.innerText = i18nInstance.t('feedbackNoInput');
   }
   if (watchedState.formState === 'invalid_URL') {
@@ -70,8 +73,8 @@ export const renderForm = (watchedState, i18nInstance) => {
 };
 
 export const addFormInputHandler = (handler) => {
-  form.addEventListener('submit', (e) => {
+  formOLD.addEventListener('submit', (e) => {
     e.preventDefault();
-    handler(input.value);
+    handler(inputOLD.value);
   });
 };

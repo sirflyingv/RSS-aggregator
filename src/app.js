@@ -32,12 +32,29 @@ export default () => {
     formState: 'loading',
   };
 
+  const elements = {
+    headerText: document.querySelector('#header-text'),
+    lead: document.querySelector('#lead'),
+    sample: document.querySelector('#sample'),
+    btnAdd: document.querySelector('#button-add'),
+    form: document.querySelector('form'),
+    input: document.querySelector('#url-input'),
+    label: document.querySelector('label'),
+    feedback: document.querySelector('#feedback'),
+    posts: document.querySelector('.posts'),
+    channels: document.querySelector('.feeds'),
+    modalTitle: document.querySelector('.modal-title'),
+    modalBody: document.querySelector('.modal-body'),
+    fullArticleButton: document.querySelector('.full-article'),
+    modalCloseButton: document.querySelector('#btn-close-modal'),
+  };
+
   const watchedState = onChange(state, () => {
-    renderForm(watchedState, i18nInstance);
-    renderModal(watchedState, i18nInstance);
+    renderForm(watchedState, i18nInstance, elements);
+    renderModal(watchedState, i18nInstance, elements);
     if (watchedState.channels.length > 0) {
-      renderChannels(watchedState, i18nInstance);
-      renderPosts(watchedState, i18nInstance);
+      renderChannels(watchedState, i18nInstance, elements);
+      renderPosts(watchedState, i18nInstance, elements);
     }
   });
 
@@ -69,29 +86,6 @@ export default () => {
   });
 
   const inputSchema = yup.string().trim().required().url();
-
-  // const inputSchema = yup
-  //   .string()
-  //   .required(() => {
-  //     watchedState.formState = 'no_inpu  t';
-  //     return 'Input URL is empty';
-  //   })
-  //   .trim()
-  //   .url((err) => {
-  //     watchedState.formState = 'invalid_URL';
-  //     return `The value ${err.value} is not a valid URL.`;
-  //   })
-  //   .test(
-  //     'is unique',
-  //     (err) => `URL ${err.value} is already added`,
-  //     (url) => {
-  //       const isUnique = !state.links.includes(url);
-  //       if (!isUnique) {
-  //         watchedState.formState = 'not_unique';
-  //       }
-  //       return isUnique;
-  //     },
-  //   );
 
   // controller
   const handleFormInput = (inputLink) => {

@@ -1,15 +1,16 @@
 /* eslint-disable no-tabs */
-const postsEl = document.querySelector('.posts');
+const postsElOLD = document.querySelector('.posts');
 
-export const renderPosts = (watchedState, i18nInstance) => {
-  postsEl.innerHTML = `
+export const renderPosts = (watchedState, i18nInstance, elements) => {
+  const { posts } = elements;
+  posts.innerHTML = `
 		<div class="card border-0">
 		  <div class="card-body">
 			<h2 class="card-title h4">${i18nInstance.t('postsHeader')}</h2>
 		  </div>
 		  <ul class="list-group border-0 rounded-0"></ul>
 		</div>`;
-  const postsUl = postsEl.querySelector('ul');
+  const postsUl = posts.querySelector('ul');
 
   watchedState.posts.forEach((post) => {
     const isRead = watchedState.uiState.readPosts.some((readPost) => readPost.link === post.link);
@@ -39,7 +40,7 @@ export const renderPosts = (watchedState, i18nInstance) => {
 };
 
 export const addShowButtonHandler = (handler) => {
-  postsEl.addEventListener('click', (e) => {
+  postsElOLD.addEventListener('click', (e) => {
     if (e.target.type !== 'button') return;
     const postLink = e.target.previousElementSibling.href;
     handler(postLink);
@@ -48,12 +49,12 @@ export const addShowButtonHandler = (handler) => {
 
 // not activating links used by context menu IN FACT better by :visited in css
 export const addLinkHandler = (handler) => {
-  postsEl.addEventListener('click', (e) => {
+  postsElOLD.addEventListener('click', (e) => {
     if (e.target.tagName !== 'A') return;
     const postLink = e.target.href;
     handler(postLink);
   });
-  postsEl.addEventListener('auxclick', (e) => {
+  postsElOLD.addEventListener('auxclick', (e) => {
     if (e.target.tagName !== 'A') return;
     const postLink = e.target.href;
     handler(postLink);

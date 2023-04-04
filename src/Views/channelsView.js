@@ -1,15 +1,16 @@
 /* eslint-disable no-tabs */
-const channelsEl = document.querySelector('.feeds');
+// const channelsEl = document.querySelector('.feeds');
 
-export default (watchedState, i18nInstance) => {
-  channelsEl.innerHTML = `
+export default (watchedState, i18nInstance, elements) => {
+  const { channels } = elements;
+  channels.innerHTML = `
 	<div class="card border-0">
 	  <div class="card-body">
 		<h2 class="card-title h4">${i18nInstance.t('channelsHeader')}</h2>
 	  </div>
 	  <ul class="list-group border-0 rounded-0"></ul>
 	</div>`;
-  const channelsUl = channelsEl.querySelector('ul');
+  const channelsUl = channels.querySelector('ul');
 
   watchedState.channels.forEach((channel) => {
     const channelHTML = `
