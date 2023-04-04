@@ -23,7 +23,6 @@ export const renderForm = (watchedState, i18nInstance) => {
     feedback.classList.add('text-danger');
     feedback.innerText = i18nInstance.t('feedbackNoInput');
   }
-
   if (watchedState.formState === 'invalid_URL') {
     input.classList.add('is-invalid');
     feedback.classList.add('text-danger');

@@ -1,14 +1,13 @@
 import 'bootstrap';
-import 'bootstrap/dist/css/bootstrap.min.css';
-
 import axios from 'axios';
 import _ from 'lodash';
 import onChange from 'on-change';
 import i18n from 'i18next';
 import * as yup from 'yup';
+import { setLocale } from 'yup';
 import locales from './locales/index.js';
 
-import { UPDATE_INTERVAL, DEFAULT_LANG } from './config.js';
+import { UPDATE_INTERVAL } from './config.js';
 import { composeProxifiedUrl, xmlToJson, normalizeRssJson } from './helpers.js';
 
 import { addFormInputHandler, renderForm } from './Views/formView';
@@ -16,10 +15,10 @@ import { renderPosts, addShowButtonHandler, addLinkHandler } from './Views/posts
 import renderModal from './Views/modalView';
 import renderChannels from './Views/channelsView';
 
-export const i18nInstance = i18n.createInstance();
 const { ru } = locales;
 
-export const app = () => {
+export default () => {
+  const i18nInstance = i18n.createInstance();
   // Model
 
   const state = {
@@ -27,7 +26,6 @@ export const app = () => {
     channels: [],
     posts: [],
     uiState: {
-      lang: DEFAULT_LANG,
       modalPost: {},
       readPosts: [],
     },
@@ -45,8 +43,7 @@ export const app = () => {
 
   i18nInstance
     .init({
-      lng: state.uiState.lang,
-      debug: false,
+      lng: 'ru',
       resources: {
         ru,
       },
@@ -56,34 +53,56 @@ export const app = () => {
     });
 
   // validating url input
-  const inputSchema = yup
-    .string()
-    .required(() => {
-      watchedState.formState = 'no_input';
-      return 'Input URL is empty';
-    })
-    .trim()
-    .url((err) => {
-      watchedState.formState = 'invalid_URL';
-      return `The value ${err.value} is not a valid URL.`;
-    })
-    .test(
-      'is unique',
-      (err) => `URL ${err.value} is already added`,
-      (url) => {
-        const isUnique = !state.links.includes(url);
-        if (!isUnique) {
-          watchedState.formState = 'not_unique';
-        }
-        return isUnique;
+  setLocale({
+    mixed: {
+      required: () => {
+        watchedState.formState = 'no_input';
+        return 'Input URL is empty';
       },
-    );
+    },
+    string: {
+      url: (err) => {
+        watchedState.formState = 'invalid_URL';
+        return `The value ${err.value} is not a valid URL`;
+      },
+    },
+  });
+
+  const inputSchema = yup.string().trim().required().url();
+
+  // const inputSchema = yup
+  //   .string()
+  //   .required(() => {
+  //     watchedState.formState = 'no_inpu  t';
+  //     return 'Input URL is empty';
+  //   })
+  //   .trim()
+  //   .url((err) => {
+  //     watchedState.formState = 'invalid_URL';
+  //     return `The value ${err.value} is not a valid URL.`;
+  //   })
+  //   .test(
+  //     'is unique',
+  //     (err) => `URL ${err.value} is already added`,
+  //     (url) => {
+  //       const isUnique = !state.links.includes(url);
+  //       if (!isUnique) {
+  //         watchedState.formState = 'not_unique';
+  //       }
+  //       return isUnique;
+  //     },
+  //   );
 
   // controller
   const handleFormInput = (inputLink) => {
     inputSchema
       .validate(inputLink)
       .then((validLink) => {
+        if (state.links.includes(validLink)) {
+          watchedState.formState = 'not_unique';
+          throw new Error(`URL ${validLink} is already added`);
+        }
+
         // watchedState.links.push(validLink); // in last then
         const proxifiedUrl = composeProxifiedUrl(validLink);
         const responsePromise = axios.get(proxifiedUrl);
@@ -97,21 +116,17 @@ export const app = () => {
             `Could not get RSS from ${response.data.status.url}. Source status: ${response.data}`,
           );
         }
-        return response.data.contents;
-      })
-      .then((contents) => {
-        const json = xmlToJson(contents);
+
+        const json = xmlToJson(response.data.contents);
         // should be rss structure validation?
         if (!_.has(json, 'rss')) {
           watchedState.formState = 'invalid_rss';
           throw new Error('XML document is not RSS');
         }
         const normalizedRss = normalizeRssJson(json);
-        return normalizedRss;
-      })
-      .then((rss) => {
+
         watchedState.links.push(inputLink); // higher level argument
-        const { channel, posts } = rss;
+        const { channel, posts } = normalizedRss;
         watchedState.channels.push(channel);
         watchedState.posts.push(...posts.reverse());
         // sort the posts?
