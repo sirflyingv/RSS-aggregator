@@ -4,12 +4,12 @@
 // const leadEl = document.querySelector('#lead');
 // const sampleEl = document.querySelector('#sample');
 // const btnAdd = document.querySelector('#button-add');
-const formOLD = document.querySelector('form');
-const inputOLD = document.querySelector('#url-input');
+// const formOLD = document.querySelector('form');
+// const inputOLD = document.querySelector('#url-input');
 // const label = document.querySelector('label');
 // const feedback = document.querySelector('#feedback');
 
-export const renderForm = (watchedState, i18nInstance, elements) => {
+export default (watchedState, i18nInstance, elements) => {
   const { label, headerText, lead, sample, btnAdd, input, feedback } = elements;
   label.innerText = i18nInstance.t('label');
   headerText.innerText = i18nInstance.t('header');
@@ -72,9 +72,9 @@ export const renderForm = (watchedState, i18nInstance, elements) => {
   }
 };
 
-export const addFormInputHandler = (handler) => {
-  formOLD.addEventListener('submit', (e) => {
-    e.preventDefault();
-    handler(inputOLD.value);
-  });
-};
+// export const addFormInputHandler = (handler) => {
+//   formOLD.addEventListener('submit', (e) => {
+//     e.preventDefault();
+//     handler(inputOLD.value);
+//   });
+// };

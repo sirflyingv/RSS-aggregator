@@ -10,8 +10,9 @@ import locales from './locales/index.js';
 import { UPDATE_INTERVAL } from './config.js';
 import { composeProxifiedUrl, xmlToJson, normalizeRssJson } from './helpers.js';
 
-import { addFormInputHandler, renderForm } from './Views/formView';
-import { renderPosts, addShowButtonHandler, addLinkHandler } from './Views/postsView';
+import elements from './elements.js';
+import renderForm from './Views/formView';
+import renderPosts from './Views/postsView';
 import renderModal from './Views/modalView';
 import renderChannels from './Views/channelsView';
 
@@ -30,23 +31,6 @@ export default () => {
       readPosts: [],
     },
     formState: 'loading',
-  };
-
-  const elements = {
-    headerText: document.querySelector('#header-text'),
-    lead: document.querySelector('#lead'),
-    sample: document.querySelector('#sample'),
-    btnAdd: document.querySelector('#button-add'),
-    form: document.querySelector('form'),
-    input: document.querySelector('#url-input'),
-    label: document.querySelector('label'),
-    feedback: document.querySelector('#feedback'),
-    posts: document.querySelector('.posts'),
-    channels: document.querySelector('.feeds'),
-    modalTitle: document.querySelector('.modal-title'),
-    modalBody: document.querySelector('.modal-body'),
-    fullArticleButton: document.querySelector('.full-article'),
-    modalCloseButton: document.querySelector('#btn-close-modal'),
   };
 
   const watchedState = onChange(state, () => {
@@ -138,9 +122,32 @@ export default () => {
     watchedState.uiState.readPosts.push(chosenPost);
   };
 
-  addFormInputHandler(handleFormInput);
-  addShowButtonHandler(handlePostClick);
-  addLinkHandler(handlePostClick);
+  // listeners
+  elements.form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    handleFormInput(elements.input.value);
+  });
+
+  elements.posts.addEventListener('click', (e) => {
+    if (e.target.type !== 'button') return;
+    const postLink = e.target.previousElementSibling.href;
+    handlePostClick(postLink);
+  });
+  elements.posts.addEventListener('click', (e) => {
+    if (e.target.tagName !== 'A') return;
+    const postLink = e.target.href;
+    handlePostClick(postLink);
+  });
+  elements.posts.addEventListener('auxclick', (e) => {
+    if (e.target.tagName !== 'A') return;
+    const postLink = e.target.href;
+    handlePostClick(postLink);
+  });
+
+  // old way
+  // addFormInputHandler(handleFormInput);
+  // addShowButtonHandler(handlePostClick);
+  // addLinkHandler(handlePostClick);
 
   const updateFeed = () => {
     if (watchedState.links.length > 0) {
