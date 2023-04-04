@@ -9,56 +9,59 @@ export default (watchedState, i18nInstance, elements) => {
   btnAdd.innerText = i18nInstance.t('buttonText');
   input.placeholder = i18nInstance.t('placeholder');
 
-  if (watchedState.formState === 'filling') {
-    input.classList.remove('is-invalid');
-    feedback.innerText = i18nInstance.t('feedbackFilling');
-  }
-  if (watchedState.formState === 'no_input') {
-    feedback.classList.add('text-danger'); //
-    feedback.innerText = i18nInstance.t('feedbackNoInput');
-  }
-  if (watchedState.formState === 'invalid_URL') {
-    input.classList.add('is-invalid');
-    feedback.classList.add('text-danger');
-    feedback.innerText = i18nInstance.t('feedbackInvalid');
-  }
-  if (watchedState.formState === 'not_unique') {
-    input.classList.add('is-invalid');
-    feedback.classList.add('text-danger');
-    feedback.innerText = i18nInstance.t('feedbackNotUnique');
-  }
-  if (watchedState.formState === 'awaiting') {
-    btnAdd.setAttribute('disabled', true);
-    input.setAttribute('disabled', true);
-    input.classList.remove('is-invalid');
-    feedback.classList.remove('text-danger');
-    feedback.innerText = i18nInstance.t('feedbackAwaitingHollow');
-    // feedback.innerText = `${JSON.stringify(watchedState)}`;
-  }
-  if (watchedState.formState === 'invalid_rss') {
-    btnAdd.removeAttribute('disabled');
-    input.removeAttribute('disabled');
-    input.classList.remove('is-invalid');
-    feedback.classList.add('text-danger');
-    feedback.innerText = i18nInstance.t('feedbackRssInvalid');
-
-    input.value = '';
-  }
-  if (watchedState.formState === 'submitted') {
-    btnAdd.removeAttribute('disabled');
-    input.removeAttribute('disabled');
-    input.classList.remove('is-invalid');
-    feedback.classList.add('text-success');
-    feedback.classList.remove('text-danger');
-    feedback.innerText = i18nInstance.t('feedbackSubmitted');
-    input.value = '';
-  }
-  if (watchedState.formState === 'network_error') {
-    btnAdd.removeAttribute('disabled');
-    input.removeAttribute('disabled');
-    input.classList.remove('is-invalid');
-    feedback.classList.add('text-danger');
-    feedback.innerText = i18nInstance.t('feedbackNetworkError');
-    input.value = '';
+  switch (watchedState.formState) {
+    case 'filling':
+      input.classList.remove('is-invalid');
+      feedback.innerText = i18nInstance.t('feedbackFilling');
+      break;
+    case 'no_input':
+      feedback.classList.add('text-danger'); //
+      feedback.innerText = i18nInstance.t('feedbackNoInput');
+      break;
+    case 'invalid_URL':
+      input.classList.add('is-invalid');
+      feedback.classList.add('text-danger');
+      feedback.innerText = i18nInstance.t('feedbackInvalid');
+      break;
+    case 'not_unique':
+      input.classList.add('is-invalid');
+      feedback.classList.add('text-danger');
+      feedback.innerText = i18nInstance.t('feedbackNotUnique');
+      break;
+    case 'awaiting':
+      btnAdd.setAttribute('disabled', true);
+      input.setAttribute('disabled', true);
+      input.classList.remove('is-invalid');
+      feedback.classList.remove('text-danger');
+      feedback.innerText = i18nInstance.t('feedbackAwaitingHollow');
+      break;
+    case 'invalid_rss':
+      btnAdd.removeAttribute('disabled');
+      input.removeAttribute('disabled');
+      input.classList.remove('is-invalid');
+      feedback.classList.add('text-danger');
+      feedback.innerText = i18nInstance.t('feedbackRssInvalid');
+      input.value = '';
+      break;
+    case 'submitted':
+      btnAdd.removeAttribute('disabled');
+      input.removeAttribute('disabled');
+      input.classList.remove('is-invalid');
+      feedback.classList.add('text-success');
+      feedback.classList.remove('text-danger');
+      feedback.innerText = i18nInstance.t('feedbackSubmitted');
+      input.value = '';
+      break;
+    case 'network_error':
+      btnAdd.removeAttribute('disabled');
+      input.removeAttribute('disabled');
+      input.classList.remove('is-invalid');
+      feedback.classList.add('text-danger');
+      feedback.innerText = i18nInstance.t('feedbackNetworkError');
+      input.value = '';
+      break;
+    default:
+      // handle unexpected formState value
+      break;
   }
 };

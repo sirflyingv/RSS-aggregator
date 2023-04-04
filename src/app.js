@@ -150,7 +150,7 @@ export default () => {
     })
     .then(() => {
       watchedState.formState = 'filling';
-      // listeners
+
       elements.form.addEventListener('submit', (e) => {
         e.preventDefault();
         handleFormInput(elements.input.value);
