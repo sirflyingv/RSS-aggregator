@@ -47,13 +47,13 @@ export default () => {
     mixed: {
       required: () => {
         watchedState.formState = 'no_input';
-        return 'Input URL is empty';
+        return i18nInstance.t('errorEmptyInput');
       },
     },
     string: {
       url: (err) => {
         watchedState.formState = 'invalid_URL';
-        return `The value ${err.value} is not a valid URL`;
+        return i18nInstance.t('errorInvalidUrl', { value: err.value });
       },
     },
   });
@@ -67,7 +67,7 @@ export default () => {
       .then((validLink) => {
         if (state.links.includes(validLink)) {
           watchedState.formState = 'not_unique';
-          throw new Error(`URL ${validLink} is already added`);
+          throw new Error(i18nInstance.t('errorInvalidUrl', { value: validLink }));
         }
         // watchedState.links.push(validLink); // in last then
         const proxifiedUrl = composeProxifiedUrl(validLink);
@@ -79,7 +79,10 @@ export default () => {
         if (!response.data.contents) {
           watchedState.formState = 'invalid_rss';
           throw new Error(
-            `Could not get RSS from ${response.data.status.url}. Source status: ${response.data}`,
+            i18nInstance.t('errorInvalidContents', {
+              url: response.data.status.url,
+              response: response.data.status.http_code,
+            }),
           );
         }
 
@@ -87,7 +90,7 @@ export default () => {
         // should be rss structure validation?
         if (!_.has(json, 'rss')) {
           watchedState.formState = 'invalid_rss';
-          throw new Error('XML document is not RSS');
+          throw new Error(i18nInstance.t('errorXmlIsNotRss'));
         }
 
         watchedState.links.push(inputLink); // higher level argument
@@ -118,7 +121,11 @@ export default () => {
           .then((response) => {
             if (response.data.status.http_code !== 200) {
               throw new Error(
-                `Could not update source ${link}. Origin proxy status: ${response.status}. RSS source status: ${response.data.status.http_code}`,
+                i18nInstance.t('errorUpdateError', {
+                  link,
+                  proxyStatus: response.status,
+                  sourceStatus: response.data.status.http_code,
+                }),
               );
             }
             return response.data.contents;
@@ -147,6 +154,7 @@ export default () => {
       resources: {
         ru,
       },
+      interpolation: { escapeValue: false },
     })
     .then(() => {
       watchedState.formState = 'filling';

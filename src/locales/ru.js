@@ -21,5 +21,13 @@ export default {
     postOpenBtn: 'Просмотр',
     modalReadFull: 'Читать полностью',
     modalCloseButton: 'Закрыть',
+    errorInvalidUrl: 'The value {{value}} is not a valid URL',
+    errorEmptyInput: 'Input URL is empty',
+    errorNotUnique: 'URL {{value}} is already added',
+    errorInvalidContents:
+      'Could not get RSS from {{url}}. Source server response status: {{response}}',
+    errorXmlIsNotRss: 'XML document is not RSS',
+    errorUpdateError:
+      'Could not update source {{link}}. Origin proxy status: {{proxyStatus}}. RSS source status: {{sourceStatus}}',
   },
 };
