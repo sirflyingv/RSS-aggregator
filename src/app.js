@@ -67,7 +67,7 @@ export default () => {
       .then((validLink) => {
         if (state.links.includes(validLink)) {
           watchedState.formState = 'not_unique';
-          throw new Error(i18nInstance.t('errorInvalidUrl', { value: validLink }));
+          // throw new Error(i18nInstance.t('errorInvalidUrl', { value: validLink }));
         }
         // watchedState.links.push(validLink); // in last then
         const proxifiedUrl = composeProxifiedUrl(validLink);
@@ -78,19 +78,19 @@ export default () => {
       .then((response) => {
         if (!response.data.contents) {
           watchedState.formState = 'invalid_rss';
-          throw new Error(
-            i18nInstance.t('errorInvalidContents', {
-              url: response.data.status.url,
-              response: response.data.status.http_code,
-            }),
-          );
+          // throw new Error(
+          //   i18nInstance.t('errorInvalidContents', {
+          //     url: response.data.status.url,
+          //     response: response.data.status.http_code,
+          //   }),
+          // );
         }
 
         const json = xmlToJson(response.data.contents);
         // should be rss structure validation?
         if (!_.has(json, 'rss')) {
           watchedState.formState = 'invalid_rss';
-          throw new Error(i18nInstance.t('errorXmlIsNotRss'));
+          // throw new Error(i18nInstance.t('errorXmlIsNotRss'));
         }
 
         watchedState.links.push(inputLink); // higher level argument
