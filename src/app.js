@@ -1,6 +1,6 @@
 import 'bootstrap';
 import axios from 'axios';
-import _ from 'lodash';
+import _, { reject } from 'lodash';
 import onChange from 'on-change';
 import i18n from 'i18next';
 import * as yup from 'yup';
@@ -68,6 +68,7 @@ export default () => {
         if (state.links.includes(validLink)) {
           watchedState.formState = 'not_unique';
           // throw new Error(i18nInstance.t('errorInvalidUrl', { value: validLink }));
+          return null;
         }
         // watchedState.links.push(validLink); // in last then
         const proxifiedUrl = composeProxifiedUrl(validLink);
@@ -84,6 +85,7 @@ export default () => {
           //     response: response.data.status.http_code,
           //   }),
           // );
+          return null;
         }
 
         const json = xmlToJson(response.data.contents);
@@ -91,6 +93,7 @@ export default () => {
         if (!_.has(json, 'rss')) {
           watchedState.formState = 'invalid_rss';
           // throw new Error(i18nInstance.t('errorXmlIsNotRss'));
+          return null;
         }
 
         watchedState.links.push(inputLink); // higher level argument
