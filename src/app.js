@@ -1,6 +1,6 @@
 import 'bootstrap';
 import axios from 'axios';
-import _, { reject } from 'lodash';
+import _ from 'lodash';
 import onChange from 'on-change';
 import i18n from 'i18next';
 import * as yup from 'yup';
@@ -76,6 +76,7 @@ export default () => {
         watchedState.formState = 'awaiting';
         return responsePromise;
       })
+      // eslint-disable-next-line consistent-return
       .then((response) => {
         if (!response.data.contents) {
           watchedState.formState = 'invalid_rss';
