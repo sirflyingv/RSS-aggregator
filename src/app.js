@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import 'bootstrap';
 import axios from 'axios';
 import _ from 'lodash';
@@ -8,7 +9,13 @@ import { setLocale } from 'yup';
 import locales from './locales/index.js';
 
 import { UPDATE_INTERVAL } from './config.js';
-import { composeProxifiedUrl, xmlToJson, normalizeRssJson } from './helpers.js';
+import {
+  composeProxifiedUrl,
+  xmlToJson,
+  normalizeRssJson,
+  fetchRSS,
+  parseXML,
+} from './helpers.js';
 
 import elements from './elements.js';
 import renderForm from './Views/formView';
@@ -60,55 +67,55 @@ export default () => {
 
   const inputSchema = yup.string().trim().required().url();
 
+  const validateUrl = (url, channelsState) =>
+    inputSchema.validate(url).then((validatedUrl) => {
+      const isUnique = !channelsState.includes((channel) => channel.url === validatedUrl);
+      if (!isUnique) {
+        watchedState.formState = 'not_unique';
+      }
+    });
+
   // controller
-  function handleFormInput(inputLink) {
-    inputSchema
-      .validate(inputLink)
-      .then((validLink) => {
-        if (state.links.includes(validLink)) {
-          watchedState.formState = 'not_unique';
-          // throw new Error(i18nInstance.t('errorInvalidUrl', { value: validLink }));
-          return null;
-        }
-        // watchedState.links.push(validLink); // in last then
-        const proxifiedUrl = composeProxifiedUrl(validLink);
-        const responsePromise = axios.get(proxifiedUrl);
-        watchedState.formState = 'awaiting';
-        return responsePromise;
-      })
-      // eslint-disable-next-line consistent-return
-      .then((response) => {
-        if (!response.data.contents) {
-          watchedState.formState = 'invalid_rss';
-          // throw new Error(
-          //   i18nInstance.t('errorInvalidContents', {
-          //     url: response.data.status.url,
-          //     response: response.data.status.http_code,
-          //   }),
-          // );
-          return null;
-        }
+  // function handleFormInput(url) {
+  //   inputSchema
+  //     .validate(url)
+  //     .then((validLink) => {
+  //       // if (watchedState.links.includes(validLink)) {
+  //       //   watchedState.formState = 'not_unique';
+  //       // }
 
-        const json = xmlToJson(response.data.contents);
-        // should be rss structure validation?
-        if (!_.has(json, 'rss')) {
-          watchedState.formState = 'invalid_rss';
-          // throw new Error(i18nInstance.t('errorXmlIsNotRss'));
-          return null;
-        }
+  //       // watchedState.links.push(validLink); // in last then
+  //       const proxifiedUrl = composeProxifiedUrl(validLink);
+  //       const responsePromise = axios.get(proxifiedUrl);
+  //       watchedState.formState = 'awaiting';
+  //       return responsePromise;
+  //     })
+  //     // eslint-disable-next-line consistent-return
+  //     .then((response) => {
+  //       if (!response.data.contents) {
+  //         watchedState.formState = 'invalid_rss';
+  //         return null;
+  //       }
 
-        watchedState.links.push(inputLink); // higher level argument
-        const { channel, posts } = normalizeRssJson(json);
-        watchedState.channels.push(channel);
-        watchedState.posts.push(...posts.reverse());
-        // sort the posts?
-        watchedState.formState = 'submitted';
-      })
-      .catch((err) => {
-        if (err.code === 'ERR_NETWORK') watchedState.formState = 'network_error';
-        console.error(err.message);
-      });
-  }
+  //       const json = xmlToJson(response.data.contents);
+  //       // should be rss structure validation?
+  //       if (!_.has(json, 'rss')) {
+  //         watchedState.formState = 'invalid_rss';
+  //         return null;
+  //       }
+
+  //       watchedState.links.push(url); // higher level argument
+  //       const { channel, posts } = normalizeRssJson(json, url);
+  //       watchedState.channels.push(channel);
+  //       watchedState.posts.push(...posts.reverse());
+  //       // sort the posts?
+  //       watchedState.formState = 'submitted';
+  //     })
+  //     .catch((err) => {
+  //       if (err.code === 'ERR_NETWORK') watchedState.formState = 'network_error';
+  //       console.error(err.message);
+  //     });
+  // }
 
   function handlePostClick(postLink) {
     const chosenPost = watchedState.posts.find((post) => post.link === postLink);
@@ -139,9 +146,15 @@ export default () => {
             const normalizedRss = normalizeRssJson(json);
             const updatedPosts = normalizedRss.posts;
             function isNewPostFresh(post) {
-              return !watchedState.posts.some((loadedPost) => _.isEqual(loadedPost, post));
+              return !watchedState.posts.some(
+                (loadedPost) => _.isEqual(loadedPost, post),
+                // eslint-disable-next-line function-paren-newline
+              );
             }
-            const freshPosts = updatedPosts.filter((newPost) => isNewPostFresh(newPost));
+            const freshPosts = updatedPosts.filter(
+              (newPost) => isNewPostFresh(newPost),
+              // eslint-disable-next-line function-paren-newline
+            );
             watchedState.posts.push(...freshPosts.reverse());
           })
           .catch((err) => {
@@ -165,7 +178,30 @@ export default () => {
 
       elements.form.addEventListener('submit', (e) => {
         e.preventDefault();
-        handleFormInput(elements.input.value);
+        const data = new FormData(e.target);
+        const url = data.get('url');
+
+        validateUrl(url, watchedState.channels)
+          .then(() => {
+            watchedState.formState = 'awaiting';
+            return fetchRSS(url);
+          })
+          .then((rssData) => {
+            if (!rssData) {
+              watchedState.formState = 'invalid_rss';
+            } else {
+              const { channel, posts } = parseXML(rssData, url);
+              watchedState.channels.push(channel);
+              watchedState.posts.push(...posts.reverse());
+              // sort the posts?
+              watchedState.formState = 'submitted';
+            }
+          })
+          .catch((err) => {
+            console.error(err);
+          });
+
+        // handleFormInput(elements.input.value);
       });
 
       elements.posts.addEventListener('click', (e) => {

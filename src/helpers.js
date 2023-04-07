@@ -1,6 +1,10 @@
-// import axios from 'axios';
+import axios from 'axios';
 import { XMLParser } from 'fast-xml-parser';
-import { ORIGIN_PROXY_URL, ORIGIN_PROXY_PATHNAME, ORIGIN_PROXY_PARAMETERS } from './config.js';
+import {
+  ORIGIN_PROXY_URL,
+  ORIGIN_PROXY_PATHNAME,
+  ORIGIN_PROXY_PARAMETERS,
+} from './config.js';
 
 export function composeProxifiedUrl(RssUrl) {
   const proxifiedUrl = new URL(ORIGIN_PROXY_URL);
@@ -14,16 +18,28 @@ export function composeProxifiedUrl(RssUrl) {
   return proxifiedUrl;
 }
 
+export const fetchRSS = (url) => {
+  const proxifiedUrl = composeProxifiedUrl(url);
+  const rssData = axios.get(proxifiedUrl).then((response) => response.data.contents);
+  return rssData;
+};
+
 const xmlToJsonParser = new XMLParser();
 export const xmlToJson = (xml) => xmlToJsonParser.parse(xml);
 
-export const normalizeRssJson = (json) => {
+export const normalizeRssJson = (json, url) => {
   const channelData = {
     channel: {
+      url,
       title: json.rss.channel.title,
       description: json.rss.channel.description,
     },
     posts: json.rss.channel.item,
   };
   return channelData;
+};
+
+export const parseXML = (xmlData, url) => {
+  const json = xmlToJson(xmlData);
+  return normalizeRssJson(json, url);
 };
