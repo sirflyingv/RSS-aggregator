@@ -75,11 +75,7 @@ export default () => {
       (err) => i18nInstance.t('errorNotUnique', { value: err.value }),
       (url) => {
         const isUnique = !watchedState.channels.find((channel) => channel.url === url);
-        if (!isUnique) {
-          watchedState.formState = 'not_unique';
-          console.log('kek');
-          watchedState.uiState.feedback = i18nInstance.t('feedbackNotUnique');
-        }
+        if (!isUnique) watchedState.formState = 'not_unique';
         return isUnique;
       },
     );
@@ -198,13 +194,14 @@ export default () => {
             return fetchRSS(url);
           })
           .then((rssData) => {
-            if (!rssData.channel) {
+            const jsonRssData = parseXML(rssData);
+            if (!_.has(jsonRssData, 'rss')) {
+              // maybe deeper validation?
               watchedState.formState = 'invalid_rss';
             } else {
-              const { channel, posts } = parseXML(rssData, url);
+              const { channel, posts } = normalizeRssJson(jsonRssData);
               watchedState.channels.push(channel);
               watchedState.posts.push(...posts.reverse());
-              // sort the posts?
               watchedState.formState = 'submitted';
             }
           })

@@ -33,10 +33,9 @@ export const normalizeRssJson = (json, url) => {
   return channelData;
 };
 
-export const parseXML = (xmlData, url) => {
+export const parseXML = (xmlData) => {
   const json = xmlToJson(xmlData);
-  console.log(json);
-  return normalizeRssJson(json, url);
+  return json;
 };
 
 export const fetchRSS = (url) => {
