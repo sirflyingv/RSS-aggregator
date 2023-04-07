@@ -166,7 +166,6 @@ export default () => {
             watchedState.posts.push(...freshPosts.reverse());
           })
           .catch((err) => {
-            if (err.code === 'ERR_NETWORK') watchedState.formState = 'network_error';
             console.error(err.message);
           });
       });
@@ -209,7 +208,8 @@ export default () => {
             }
           })
           .catch((err) => {
-            console.error(err);
+            if (err.code === 'ERR_NETWORK') watchedState.formState = 'network_error';
+            console.error(err.message);
           });
 
         // handleFormInput(elements.input.value);
