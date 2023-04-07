@@ -65,15 +65,26 @@ export default () => {
     },
   });
 
-  const inputSchema = yup.string().trim().required().url();
+  const inputSchema = yup
+    .string()
+    .trim()
+    .required()
+    .url()
+    .test(
+      'is unique',
+      (err) => i18nInstance.t('errorNotUnique', { value: err.value }),
+      (url) => {
+        const isUnique = !watchedState.channels.find((channel) => channel.url === url);
+        if (!isUnique) {
+          watchedState.formState = 'not_unique';
+          console.log('kek');
+          watchedState.uiState.feedback = i18nInstance.t('feedbackNotUnique');
+        }
+        return isUnique;
+      },
+    );
 
-  const validateUrl = (url, channelsState) =>
-    inputSchema.validate(url).then((validatedUrl) => {
-      const isUnique = !channelsState.includes((channel) => channel.url === validatedUrl);
-      if (!isUnique) {
-        watchedState.formState = 'not_unique';
-      }
-    });
+  const validateUrl = (url) => inputSchema.validate(url);
 
   // controller
   // function handleFormInput(url) {
