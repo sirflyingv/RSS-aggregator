@@ -75,7 +75,6 @@ export default () => {
       (err) => i18nInstance.t('errorNotUnique', { value: err.value }),
       (url) => {
         const isUnique = !watchedState.channels.find((channel) => channel.url === url);
-        console.log(isUnique);
         if (!isUnique) watchedState.formState = 'not_unique';
         return isUnique;
       },
@@ -83,95 +82,11 @@ export default () => {
 
   const validateUrl = (url) => inputSchema.validate(url);
 
-  // controller
-  // function handleFormInput(url) {
-  //   inputSchema
-  //     .validate(url)
-  //     .then((validLink) => {
-  //       // if (watchedState.links.includes(validLink)) {
-  //       //   watchedState.formState = 'not_unique';
-  //       // }
-
-  //       // watchedState.links.push(validLink); // in last then
-  //       const proxifiedUrl = composeProxifiedUrl(validLink);
-  //       const responsePromise = axios.get(proxifiedUrl);
-  //       watchedState.formState = 'awaiting';
-  //       return responsePromise;
-  //     })
-  //     // eslint-disable-next-line consistent-return
-  //     .then((response) => {
-  //       if (!response.data.contents) {
-  //         watchedState.formState = 'invalid_rss';
-  //         return null;
-  //       }
-
-  //       const json = xmlToJson(response.data.contents);
-  //       // should be rss structure validation?
-  //       if (!_.has(json, 'rss')) {
-  //         watchedState.formState = 'invalid_rss';
-  //         return null;
-  //       }
-
-  //       watchedState.links.push(url); // higher level argument
-  //       const { channel, posts } = normalizeRssJson(json, url);
-  //       watchedState.channels.push(channel);
-  //       watchedState.posts.push(...posts.reverse());
-  //       // sort the posts?
-  //       watchedState.formState = 'submitted';
-  //     })
-  //     .catch((err) => {
-  //       if (err.code === 'ERR_NETWORK') watchedState.formState = 'network_error';
-  //       console.error(err.message);
-  //     });
-  // }
-
   function handlePostClick(postLink) {
     const chosenPost = watchedState.posts.find((post) => post.link === postLink);
     watchedState.uiState.modalPost = chosenPost;
     watchedState.uiState.readPosts.push(chosenPost);
   }
-
-  const updateFeed = () => {
-    if (watchedState.links.length > 0) {
-      watchedState.links.forEach((link) => {
-        const proxifiedUrl = composeProxifiedUrl(link);
-        axios
-          .get(proxifiedUrl)
-          .then((response) => {
-            if (response.data.status.http_code !== 200) {
-              throw new Error(
-                i18nInstance.t('errorUpdateError', {
-                  link,
-                  proxyStatus: response.status,
-                  sourceStatus: response.data.status.http_code,
-                }),
-              );
-            }
-            return response.data.contents;
-          })
-          .then((data) => {
-            const json = xmlToJson(data);
-            const normalizedRss = normalizeRssJson(json);
-            const updatedPosts = normalizedRss.posts;
-            function isNewPostFresh(post) {
-              return !watchedState.posts.some(
-                (loadedPost) => _.isEqual(loadedPost, post),
-                // eslint-disable-next-line function-paren-newline
-              );
-            }
-            const freshPosts = updatedPosts.filter(
-              (newPost) => isNewPostFresh(newPost),
-              // eslint-disable-next-line function-paren-newline
-            );
-            watchedState.posts.push(...freshPosts.reverse());
-          })
-          .catch((err) => {
-            console.error(err.message);
-          });
-      });
-    }
-    setTimeout(updateFeed, UPDATE_INTERVAL);
-  };
 
   i18nInstance
     .init({
@@ -191,7 +106,6 @@ export default () => {
 
         validateUrl(url, watchedState.channels)
           .then(() => {
-            console.log(state);
             watchedState.formState = 'awaiting';
             return fetchRSS(url);
           })
@@ -211,8 +125,6 @@ export default () => {
             if (err.code === 'ERR_NETWORK') watchedState.formState = 'network_error';
             console.error(err.message);
           });
-
-        // handleFormInput(elements.input.value);
       });
 
       elements.posts.addEventListener('click', (e) => {
@@ -231,6 +143,102 @@ export default () => {
         handlePostClick(postLink);
       });
     });
+
+  // const updateFeed = () => {
+  //   if (watchedState.channels.length > 0) {
+  //     watchedState.channels.forEach((channel) => {
+  //           return fetchRSS(channelslink);
+  //         })
+  //         .then((data) => {
+  //           const json = xmlToJson(data);
+  //           const normalizedRss = normalizeRssJson(json);
+  //           const updatedPosts = normalizedRss.posts;
+  //           function isNewPostFresh(post) {
+  //             return !watchedState.posts.some(
+  //               (loadedPost) => _.isEqual(loadedPost, post),
+  //               // eslint-disable-next-line function-paren-newline
+  //             );
+  //           }
+  //           const freshPosts = updatedPosts.filter(
+  //             (newPost) => isNewPostFresh(newPost),
+  //             // eslint-disable-next-line function-paren-newline
+  //           );
+  //           watchedState.posts.push(...freshPosts.reverse());
+  //         })
+  //         .catch((err) => {
+  //           console.error(err.message);
+  //         });
+  //     });
+  //   }
+  //   setTimeout(updateFeed, UPDATE_INTERVAL);
+  // };
+
+  function isPostFresh(post) {
+    return !watchedState.posts.some((loadedPost) => _.isEqual(loadedPost, post));
+  }
+
+  const updateFeed = () => {
+    if (watchedState.channels.length > 0) {
+      watchedState.channels.forEach((channel) => {
+        fetchRSS(channel.url)
+          .then((rssData) => {
+            const jsonRssData = parseXML(rssData);
+            if (_.has(jsonRssData, 'rss')) {
+              const normalizedRss = normalizeRssJson(jsonRssData, channel.url);
+              const updatedPosts = normalizedRss.posts;
+              const freshPosts = updatedPosts.filter((newPost) => isPostFresh(newPost));
+              watchedState.posts.push(...freshPosts.reverse());
+            }
+          })
+          .catch((err) => {
+            console.error(err.message);
+          });
+      });
+    }
+    setTimeout(updateFeed, UPDATE_INTERVAL);
+  };
+
+  // const updateFeed = () => {
+  //   if (watchedState.links.length > 0) {
+  //     watchedState.links.forEach((link) => {
+  //       const proxifiedUrl = composeProxifiedUrl(link);
+  //       axios
+  //         .get(proxifiedUrl)
+  //         .then((response) => {
+  //           if (response.data.status.http_code !== 200) {
+  //             throw new Error(
+  //               i18nInstance.t('errorUpdateError', {
+  //                 link,
+  //                 proxyStatus: response.status,
+  //                 sourceStatus: response.data.status.http_code,
+  //               }),
+  //             );
+  //           }
+  //           return response.data.contents;
+  //         })
+  //         .then((data) => {
+  //           const json = xmlToJson(data);
+  //           const normalizedRss = normalizeRssJson(json);
+  //           const updatedPosts = normalizedRss.posts;
+  //           function isNewPostFresh(post) {
+  //             return !watchedState.posts.some(
+  //               (loadedPost) => _.isEqual(loadedPost, post),
+  //               // eslint-disable-next-line function-paren-newline
+  //             );
+  //           }
+  //           const freshPosts = updatedPosts.filter(
+  //             (newPost) => isNewPostFresh(newPost),
+  //             // eslint-disable-next-line function-paren-newline
+  //           );
+  //           watchedState.posts.push(...freshPosts.reverse());
+  //         })
+  //         .catch((err) => {
+  //           console.error(err.message);
+  //         });
+  //     });
+  //   }
+  //   setTimeout(updateFeed, UPDATE_INTERVAL);
+  // };
 
   updateFeed();
 };
