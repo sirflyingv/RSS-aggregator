@@ -18,12 +18,6 @@ export function composeProxifiedUrl(RssUrl) {
   return proxifiedUrl;
 }
 
-export const fetchRSS = (url) => {
-  const proxifiedUrl = composeProxifiedUrl(url);
-  const rssData = axios.get(proxifiedUrl).then((response) => response.data.contents);
-  return rssData;
-};
-
 const xmlToJsonParser = new XMLParser();
 export const xmlToJson = (xml) => xmlToJsonParser.parse(xml);
 
@@ -41,5 +35,12 @@ export const normalizeRssJson = (json, url) => {
 
 export const parseXML = (xmlData, url) => {
   const json = xmlToJson(xmlData);
+  console.log(json);
   return normalizeRssJson(json, url);
+};
+
+export const fetchRSS = (url) => {
+  const proxifiedUrl = composeProxifiedUrl(url);
+  const rssData = axios.get(proxifiedUrl).then((response) => response.data.contents);
+  return rssData;
 };

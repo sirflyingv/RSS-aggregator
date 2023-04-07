@@ -198,7 +198,7 @@ export default () => {
             return fetchRSS(url);
           })
           .then((rssData) => {
-            if (!rssData) {
+            if (!rssData.channel) {
               watchedState.formState = 'invalid_rss';
             } else {
               const { channel, posts } = parseXML(rssData, url);
