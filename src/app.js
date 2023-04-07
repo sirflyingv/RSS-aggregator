@@ -75,6 +75,7 @@ export default () => {
       (err) => i18nInstance.t('errorNotUnique', { value: err.value }),
       (url) => {
         const isUnique = !watchedState.channels.find((channel) => channel.url === url);
+        console.log(isUnique);
         if (!isUnique) watchedState.formState = 'not_unique';
         return isUnique;
       },
@@ -190,16 +191,17 @@ export default () => {
 
         validateUrl(url, watchedState.channels)
           .then(() => {
+            console.log(state);
             watchedState.formState = 'awaiting';
             return fetchRSS(url);
           })
           .then((rssData) => {
             const jsonRssData = parseXML(rssData);
             if (!_.has(jsonRssData, 'rss')) {
-              // maybe deeper validation?
+              // enough?
               watchedState.formState = 'invalid_rss';
             } else {
-              const { channel, posts } = normalizeRssJson(jsonRssData);
+              const { channel, posts } = normalizeRssJson(jsonRssData, url);
               watchedState.channels.push(channel);
               watchedState.posts.push(...posts.reverse());
               watchedState.formState = 'submitted';
