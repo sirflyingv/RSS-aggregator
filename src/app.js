@@ -1,6 +1,5 @@
 /* eslint-disable max-len */
 import 'bootstrap';
-import axios from 'axios';
 import _ from 'lodash';
 import onChange from 'on-change';
 import i18n from 'i18next';
@@ -9,13 +8,7 @@ import { setLocale } from 'yup';
 import locales from './locales/index.js';
 
 import { UPDATE_INTERVAL } from './config.js';
-import {
-  composeProxifiedUrl,
-  xmlToJson,
-  normalizeRssJson,
-  fetchRSS,
-  parseXML,
-} from './helpers.js';
+import { normalizeRssJson, fetchRSS, parseXML } from './helpers.js';
 
 import elements from './elements.js';
 import renderForm from './Views/formView';
@@ -80,8 +73,6 @@ export default () => {
       },
     );
 
-  const validateUrl = (url) => inputSchema.validate(url);
-
   function handlePostClick(postLink) {
     const chosenPost = watchedState.posts.find((post) => post.link === postLink);
     watchedState.uiState.modalPost = chosenPost;
@@ -104,7 +95,8 @@ export default () => {
         const data = new FormData(e.target);
         const url = data.get('url');
 
-        validateUrl(url, watchedState.channels)
+        inputSchema
+          .validate(url)
           .then(() => {
             watchedState.formState = 'awaiting';
             return fetchRSS(url);
@@ -144,35 +136,6 @@ export default () => {
       });
     });
 
-  // const updateFeed = () => {
-  //   if (watchedState.channels.length > 0) {
-  //     watchedState.channels.forEach((channel) => {
-  //           return fetchRSS(channelslink);
-  //         })
-  //         .then((data) => {
-  //           const json = xmlToJson(data);
-  //           const normalizedRss = normalizeRssJson(json);
-  //           const updatedPosts = normalizedRss.posts;
-  //           function isNewPostFresh(post) {
-  //             return !watchedState.posts.some(
-  //               (loadedPost) => _.isEqual(loadedPost, post),
-  //               // eslint-disable-next-line function-paren-newline
-  //             );
-  //           }
-  //           const freshPosts = updatedPosts.filter(
-  //             (newPost) => isNewPostFresh(newPost),
-  //             // eslint-disable-next-line function-paren-newline
-  //           );
-  //           watchedState.posts.push(...freshPosts.reverse());
-  //         })
-  //         .catch((err) => {
-  //           console.error(err.message);
-  //         });
-  //     });
-  //   }
-  //   setTimeout(updateFeed, UPDATE_INTERVAL);
-  // };
-
   function isPostFresh(post) {
     return !watchedState.posts.some((loadedPost) => _.isEqual(loadedPost, post));
   }
@@ -197,48 +160,6 @@ export default () => {
     }
     setTimeout(updateFeed, UPDATE_INTERVAL);
   };
-
-  // const updateFeed = () => {
-  //   if (watchedState.links.length > 0) {
-  //     watchedState.links.forEach((link) => {
-  //       const proxifiedUrl = composeProxifiedUrl(link);
-  //       axios
-  //         .get(proxifiedUrl)
-  //         .then((response) => {
-  //           if (response.data.status.http_code !== 200) {
-  //             throw new Error(
-  //               i18nInstance.t('errorUpdateError', {
-  //                 link,
-  //                 proxyStatus: response.status,
-  //                 sourceStatus: response.data.status.http_code,
-  //               }),
-  //             );
-  //           }
-  //           return response.data.contents;
-  //         })
-  //         .then((data) => {
-  //           const json = xmlToJson(data);
-  //           const normalizedRss = normalizeRssJson(json);
-  //           const updatedPosts = normalizedRss.posts;
-  //           function isNewPostFresh(post) {
-  //             return !watchedState.posts.some(
-  //               (loadedPost) => _.isEqual(loadedPost, post),
-  //               // eslint-disable-next-line function-paren-newline
-  //             );
-  //           }
-  //           const freshPosts = updatedPosts.filter(
-  //             (newPost) => isNewPostFresh(newPost),
-  //             // eslint-disable-next-line function-paren-newline
-  //           );
-  //           watchedState.posts.push(...freshPosts.reverse());
-  //         })
-  //         .catch((err) => {
-  //           console.error(err.message);
-  //         });
-  //     });
-  //   }
-  //   setTimeout(updateFeed, UPDATE_INTERVAL);
-  // };
 
   updateFeed();
 };
