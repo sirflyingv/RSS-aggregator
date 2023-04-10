@@ -8,7 +8,13 @@ import { setLocale } from 'yup';
 import locales from './locales/index.js';
 
 import { UPDATE_INTERVAL } from './config.js';
-import { normalizeRssJson, fetchRSS, parseXML } from './helpers.js';
+import {
+  // normalizeRssJson,
+  fetchRSS,
+  // parseXML,
+  parseXML2,
+  normalizeRssObj,
+} from './helpers.js';
 
 import elements from './elements.js';
 import renderForm from './Views/formView';
@@ -102,16 +108,28 @@ export default () => {
             return fetchRSS(url);
           })
           .then((rssData) => {
-            const jsonRssData = parseXML(rssData);
-            if (!_.has(jsonRssData, 'rss')) {
+            //
+            const parsedRss = parseXML2(rssData);
+            if (!parsedRss) {
               // enough?
               watchedState.formState = 'invalid_rss';
             } else {
-              const { channel, posts } = normalizeRssJson(jsonRssData, url);
+              const { channel, posts } = normalizeRssObj(parsedRss, url);
               watchedState.channels.push(channel);
               watchedState.posts.push(...posts.reverse());
               watchedState.formState = 'submitted';
             }
+            //
+            // const jsonRssData = parseXML(rssData);
+            // if (!_.has(jsonRssData, 'rss')) {
+            //   // enough?
+            //   watchedState.formState = 'invalid_rss';
+            // } else {
+            //   const { channel, posts } = normalizeRssJson(jsonRssData, url);
+            //   watchedState.channels.push(channel);
+            //   watchedState.posts.push(...posts.reverse());
+            //   watchedState.formState = 'submitted';
+            // }
           })
           .catch((err) => {
             if (err.code === 'ERR_NETWORK') watchedState.formState = 'network_error';
@@ -145,13 +163,11 @@ export default () => {
       watchedState.channels.forEach((channel) => {
         fetchRSS(channel.url)
           .then((rssData) => {
-            const jsonRssData = parseXML(rssData);
-            if (_.has(jsonRssData, 'rss')) {
-              const normalizedRss = normalizeRssJson(jsonRssData, channel.url);
-              const updatedPosts = normalizedRss.posts;
-              const freshPosts = updatedPosts.filter((newPost) => isPostFresh(newPost));
-              watchedState.posts.push(...freshPosts.reverse());
-            }
+            const parsedRss = parseXML2(rssData);
+            const normalizedRss = normalizeRssObj(parsedRss, channel.url);
+            const updatedPosts = normalizedRss.posts;
+            const freshPosts = updatedPosts.filter((newPost) => isPostFresh(newPost));
+            watchedState.posts.push(...freshPosts.reverse());
           })
           .catch((err) => {
             console.error(err.message);
