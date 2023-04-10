@@ -1,5 +1,4 @@
 import axios from 'axios';
-// import { XMLParser } from 'fast-xml-parser';
 import {
   ORIGIN_PROXY_URL,
   ORIGIN_PROXY_PATHNAME,
@@ -18,26 +17,6 @@ export function composeProxifiedUrl(RssUrl) {
   return proxifiedUrl;
 }
 
-// const xmlToJsonParser = new XMLParser();
-// export const xmlToJson = (xml) => xmlToJsonParser.parse(xml);
-
-// export const normalizeRssJson = (obj, url) => {
-//   const channelData = {
-//     channel: {
-//       url,
-//       title: obj.rss.channel.title,
-//       description: obj.rss.channel.description,
-//     },
-//     posts: obj.rss.channel.item,
-//   };
-//   return channelData;
-// };
-
-// export const parseXML = (xmlData) => {
-//   const json = xmlToJson(xmlData);
-//   return json;
-// };
-
 export const normalizeRssObj = (obj, url) => {
   const channelData = {
     channel: {
@@ -52,13 +31,11 @@ export const normalizeRssObj = (obj, url) => {
 
 const xmlParser = new DOMParser();
 
-export const parseXML2 = (xmlData) => {
+export const parseXML = (xmlData) => {
   const data = xmlParser.parseFromString(xmlData, 'text/xml');
-
   if (data.children[0].nodeName !== 'rss') return null;
 
   const channel = data.getElementsByTagName('channel')[0];
-
   const channelInfoEntries = Array.from(channel.children)
     .filter((child) => child.nodeName !== 'item')
     .map((el) => [el.nodeName, el.textContent]);

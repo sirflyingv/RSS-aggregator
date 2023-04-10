@@ -8,13 +8,7 @@ import { setLocale } from 'yup';
 import locales from './locales/index.js';
 
 import { UPDATE_INTERVAL } from './config.js';
-import {
-  // normalizeRssJson,
-  fetchRSS,
-  // parseXML,
-  parseXML2,
-  normalizeRssObj,
-} from './helpers.js';
+import { fetchRSS, parseXML, normalizeRssObj } from './helpers.js';
 
 import elements from './elements.js';
 import renderForm from './Views/formView';
@@ -79,6 +73,33 @@ export default () => {
       },
     );
 
+  function handleFormSubmit(form) {
+    const data = new FormData(form);
+    const url = data.get('url');
+
+    inputSchema
+      .validate(url)
+      .then(() => {
+        watchedState.formState = 'awaiting';
+        return fetchRSS(url);
+      })
+      .then((rssData) => {
+        const parsedRss = parseXML(rssData);
+        if (!parsedRss) {
+          watchedState.formState = 'invalid_rss';
+        } else {
+          const { channel, posts } = normalizeRssObj(parsedRss, url);
+          watchedState.channels.push(channel);
+          watchedState.posts.push(...posts.reverse());
+          watchedState.formState = 'submitted';
+        }
+      })
+      .catch((err) => {
+        if (err.code === 'ERR_NETWORK') watchedState.formState = 'network_error';
+        console.error(err.message);
+      });
+  }
+
   function handlePostClick(postLink) {
     const chosenPost = watchedState.posts.find((post) => post.link === postLink);
     watchedState.uiState.modalPost = chosenPost;
@@ -98,43 +119,7 @@ export default () => {
 
       elements.form.addEventListener('submit', (e) => {
         e.preventDefault();
-        const data = new FormData(e.target);
-        const url = data.get('url');
-
-        inputSchema
-          .validate(url)
-          .then(() => {
-            watchedState.formState = 'awaiting';
-            return fetchRSS(url);
-          })
-          .then((rssData) => {
-            //
-            const parsedRss = parseXML2(rssData);
-            if (!parsedRss) {
-              // enough?
-              watchedState.formState = 'invalid_rss';
-            } else {
-              const { channel, posts } = normalizeRssObj(parsedRss, url);
-              watchedState.channels.push(channel);
-              watchedState.posts.push(...posts.reverse());
-              watchedState.formState = 'submitted';
-            }
-            //
-            // const jsonRssData = parseXML(rssData);
-            // if (!_.has(jsonRssData, 'rss')) {
-            //   // enough?
-            //   watchedState.formState = 'invalid_rss';
-            // } else {
-            //   const { channel, posts } = normalizeRssJson(jsonRssData, url);
-            //   watchedState.channels.push(channel);
-            //   watchedState.posts.push(...posts.reverse());
-            //   watchedState.formState = 'submitted';
-            // }
-          })
-          .catch((err) => {
-            if (err.code === 'ERR_NETWORK') watchedState.formState = 'network_error';
-            console.error(err.message);
-          });
+        handleFormSubmit(e.target);
       });
 
       elements.posts.addEventListener('click', (e) => {
@@ -163,7 +148,7 @@ export default () => {
       watchedState.channels.forEach((channel) => {
         fetchRSS(channel.url)
           .then((rssData) => {
-            const parsedRss = parseXML2(rssData);
+            const parsedRss = parseXML(rssData);
             const normalizedRss = normalizeRssObj(parsedRss, channel.url);
             const updatedPosts = normalizedRss.posts;
             const freshPosts = updatedPosts.filter((newPost) => isPostFresh(newPost));
