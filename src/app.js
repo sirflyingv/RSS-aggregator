@@ -10,11 +10,13 @@ import locales from './locales/index.js';
 import { UPDATE_INTERVAL } from './config.js';
 import { fetchRSS, parseXML, normalizeRssObj } from './helpers.js';
 
-import elements from './elements.js';
-import renderForm from './Views/formView';
-import renderPosts from './Views/postsView';
-import renderModal from './Views/modalView';
-import renderChannels from './Views/channelsView';
+import {
+  elements,
+  renderForm,
+  renderPosts,
+  renderModal,
+  renderChannels,
+} from './Views/index.js';
 
 const { ru } = locales;
 
