@@ -10,8 +10,22 @@ export default (watchedState, i18nInstance, elements) => {
   input.placeholder = i18nInstance.t('placeholder');
 
   switch (watchedState.form) {
-    case 'filling':
+    case 'invalid':
+      input.classList.add('is-invalid');
+      break;
+
+    case 'valid':
       input.classList.remove('is-invalid');
+      break;
+
+    default:
+      //
+      break;
+  }
+
+  switch (watchedState.process) {
+    case 'startup':
+      // input.classList.remove('is-invalid');
       feedback.innerText = i18nInstance.t('feedbackFilling');
       break;
     case 'no_input':
@@ -19,26 +33,26 @@ export default (watchedState, i18nInstance, elements) => {
       feedback.innerText = i18nInstance.t('feedbackNoInput');
       break;
     case 'invalid_URL':
-      input.classList.add('is-invalid');
+      // input.classList.add('is-invalid');
       feedback.classList.add('text-danger');
       feedback.innerText = i18nInstance.t('feedbackInvalid');
       break;
     case 'not_unique':
-      input.classList.add('is-invalid');
+      // input.classList.add('is-invalid');
       feedback.classList.add('text-danger');
       feedback.innerText = i18nInstance.t('feedbackNotUnique');
       break;
     case 'awaiting':
       btnAdd.setAttribute('disabled', true);
       input.setAttribute('disabled', true);
-      input.classList.remove('is-invalid');
+      // input.classList.remove('is-invalid');
       feedback.classList.remove('text-danger');
       feedback.innerText = i18nInstance.t('feedbackAwaitingHollow');
       break;
     case 'invalid_rss':
       btnAdd.removeAttribute('disabled');
       input.removeAttribute('disabled');
-      input.classList.remove('is-invalid');
+      // input.classList.remove('is-invalid');
       feedback.classList.add('text-danger');
       feedback.innerText = i18nInstance.t('feedbackRssInvalid');
       input.value = '';
@@ -46,7 +60,7 @@ export default (watchedState, i18nInstance, elements) => {
     case 'submitted':
       btnAdd.removeAttribute('disabled');
       input.removeAttribute('disabled');
-      input.classList.remove('is-invalid');
+      // input.classList.remove('is-invalid');
       feedback.classList.add('text-success');
       feedback.classList.remove('text-danger');
       feedback.innerText = i18nInstance.t('feedbackSubmitted');
@@ -55,7 +69,7 @@ export default (watchedState, i18nInstance, elements) => {
     case 'network_error':
       btnAdd.removeAttribute('disabled');
       input.removeAttribute('disabled');
-      input.classList.remove('is-invalid');
+      // input.classList.remove('is-invalid');
       feedback.classList.add('text-danger');
       feedback.innerText = i18nInstance.t('feedbackNetworkError');
       input.value = '';

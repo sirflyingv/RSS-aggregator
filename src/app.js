@@ -1,5 +1,4 @@
 /* eslint-disable max-len */
-// import 'bootstrap';
 import _ from 'lodash';
 import onChange from 'on-change';
 import i18n from 'i18next';
@@ -26,12 +25,12 @@ export default () => {
   // Model
   const state = {
     links: [],
-    channels: [], // id
-    posts: [], // id
+    channels: [],
+    posts: [],
     ui: {
       modalPost: {},
-      showModal: false, // modal state without bootstrap
-      readPosts: [], // сюда id постов
+      showModal: false,
+      readPosts: [], // сюда id постов и юзать для отметки прочитанного
     },
     form: 'startup',
     process: 'idle',
@@ -77,12 +76,14 @@ export default () => {
     const url = data.get('url');
 
     if (!isUrlUnique(url)) {
-      watchedState.form = 'not_unique';
+      watchedState.process = 'not_unique';
+      watchedState.form = 'invalid';
     } else {
       inputSchema
         .validate(url)
         .then(() => {
-          watchedState.form = 'awaiting'; // separate form state and general process state !!!
+          watchedState.form = 'valid';
+          watchedState.process = 'awaiting'; // separate form state and general process state !!!
           return fetchRSS(url);
         })
         .then((rssData) => {
@@ -90,13 +91,24 @@ export default () => {
           const { channel, posts } = normalizeRssObj(parsedRss, url);
           watchedState.addChannel(channel);
           posts.reverse().forEach((post) => watchedState.addPost(post));
-          watchedState.form = 'submitted';
+          watchedState.process = 'submitted';
         })
         .catch((err) => {
-          if (err.message.key === 'noInput') watchedState.form = 'no_input';
-          if (err.message.key === 'notUrl') watchedState.form = 'invalid_URL';
-          if (err.isParsingError) watchedState.form = 'invalid_rss';
-          if (err.code === 'ERR_NETWORK') watchedState.form = 'network_error';
+          if (err.message.key === 'noInput') {
+            watchedState.process = 'no_input';
+            watchedState.form = 'invalid';
+          }
+          if (err.message.key === 'notUrl') {
+            watchedState.process = 'invalid_URL';
+            watchedState.form = 'invalid';
+          }
+          if (err.isParsingError) {
+            watchedState.process = 'invalid_rss';
+            watchedState.form = 'invalid';
+          }
+          if (err.code === 'ERR_NETWORK') {
+            watchedState.process = 'network_error';
+          }
           console.error(err.message);
         });
     }
