@@ -1,5 +1,5 @@
 /* eslint-disable max-len */
-import 'bootstrap';
+// import 'bootstrap';
 import _ from 'lodash';
 import onChange from 'on-change';
 import i18n from 'i18next';
@@ -26,13 +26,14 @@ export default () => {
   // Model
   const state = {
     links: [],
-    channels: [],
-    posts: [],
-    uiState: {
-      modalPost: {},
-      readPosts: [],
+    channels: [], // id
+    posts: [], // id
+    ui: {
+      modalPost: {}, // modal state without bootstrap
+      readPosts: [], // сюда id постов
     },
-    formState: 'loading',
+    form: 'startup',
+    process: 'idle',
   };
 
   const watchedState = onChange(state, () => {
@@ -47,65 +48,56 @@ export default () => {
   // validating url input
   setLocale({
     mixed: {
-      required: () => {
-        watchedState.formState = 'no_input';
-        return i18nInstance.t('errorEmptyInput');
-      },
+      required: () => ({ key: 'noInput' }),
     },
     string: {
-      url: (err) => {
-        watchedState.formState = 'invalid_URL';
-        return i18nInstance.t('errorInvalidUrl', { value: err.value });
-      },
+      url: () => ({ key: 'notUrl' }),
     },
   });
 
-  const inputSchema = yup
-    .string()
-    .trim()
-    .required()
-    .url()
-    .test(
-      'is unique',
-      (err) => i18nInstance.t('errorNotUnique', { value: err.value }),
-      (url) => {
-        const isUnique = !watchedState.channels.find((channel) => channel.url === url);
-        if (!isUnique) watchedState.formState = 'not_unique';
-        return isUnique;
-      },
-    );
+  const inputSchema = yup.string().trim().required().url();
+
+  const isUrlUnique = (url) =>
+    !watchedState.channels.find((channel) => channel.url === url);
 
   function handleFormSubmit(form) {
     const data = new FormData(form);
     const url = data.get('url');
 
-    inputSchema
-      .validate(url)
-      .then(() => {
-        watchedState.formState = 'awaiting';
-        return fetchRSS(url);
-      })
-      .then((rssData) => {
-        const parsedRss = parseXML(rssData);
-        if (!parsedRss) {
-          watchedState.formState = 'invalid_rss';
-        } else {
-          const { channel, posts } = normalizeRssObj(parsedRss, url);
-          watchedState.channels.push(channel);
-          watchedState.posts.push(...posts.reverse());
-          watchedState.formState = 'submitted';
-        }
-      })
-      .catch((err) => {
-        if (err.code === 'ERR_NETWORK') watchedState.formState = 'network_error';
-        console.error(err.message);
-      });
+    if (!isUrlUnique(url)) {
+      watchedState.form = 'not_unique';
+    } else {
+      inputSchema
+        .validate(url)
+        .then(() => {
+          watchedState.form = 'awaiting'; // separate form state and general process state !!!
+          return fetchRSS(url);
+        })
+        .then((rssData) => {
+          const parsedRss = parseXML(rssData);
+          if (!parsedRss) {
+            watchedState.form = 'invalid_rss';
+          } else {
+            const { channel, posts } = normalizeRssObj(parsedRss, url);
+            watchedState.channels.push(channel);
+            watchedState.posts.push(...posts.reverse());
+            watchedState.form = 'submitted';
+          }
+        })
+        .catch((err) => {
+          if (err.message.key === 'noInput') watchedState.form = 'no_input';
+          if (err.message.key === 'notUrl') watchedState.form = 'invalid_URL';
+          if (err.code === 'ERR_NETWORK') watchedState.form = 'network_error';
+          if (err.isParsingError) watchedState.form = 'invalid_rss';
+          console.error(err.message);
+        });
+    }
   }
 
   function handlePostClick(postLink) {
     const chosenPost = watchedState.posts.find((post) => post.link === postLink);
-    watchedState.uiState.modalPost = chosenPost;
-    watchedState.uiState.readPosts.push(chosenPost);
+    watchedState.ui.modalPost = chosenPost;
+    watchedState.ui.readPosts.push(chosenPost);
   }
 
   i18nInstance
@@ -117,7 +109,7 @@ export default () => {
       interpolation: { escapeValue: false },
     })
     .then(() => {
-      watchedState.formState = 'filling';
+      watchedState.form = 'filling';
 
       elements.form.addEventListener('submit', (e) => {
         e.preventDefault();

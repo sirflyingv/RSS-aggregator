@@ -9,13 +9,13 @@ export default (watchedState, i18nInstance, elements) => {
   btnAdd.innerText = i18nInstance.t('buttonText');
   input.placeholder = i18nInstance.t('placeholder');
 
-  switch (watchedState.formState) {
+  switch (watchedState.form) {
     case 'filling':
       input.classList.remove('is-invalid');
       feedback.innerText = i18nInstance.t('feedbackFilling');
       break;
     case 'no_input':
-      feedback.classList.add('text-danger'); //
+      feedback.classList.add('text-danger');
       feedback.innerText = i18nInstance.t('feedbackNoInput');
       break;
     case 'invalid_URL':

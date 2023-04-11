@@ -24,7 +24,7 @@ export const normalizeRssObj = (obj, url) => {
       title: obj.rss.channel.title,
       description: obj.rss.channel.description,
     },
-    posts: obj.rss.posts,
+    posts: obj.rss.items,
   };
   return channelData;
 };
@@ -33,7 +33,12 @@ const xmlParser = new DOMParser();
 
 export const parseXML = (xmlData) => {
   const data = xmlParser.parseFromString(xmlData, 'text/xml');
-  if (data.children[0].nodeName !== 'rss') return null;
+  if (data.children[0].nodeName !== 'rss') {
+    const error = new Error('XML does not contain RSS');
+    error.isParsingError = true;
+    // error.data = data;
+    throw error;
+  }
 
   const channel = data.getElementsByTagName('channel')[0];
   const channelInfoEntries = Array.from(channel.children)
@@ -41,7 +46,7 @@ export const parseXML = (xmlData) => {
     .map((el) => [el.nodeName, el.textContent]);
   const channelInfo = Object.fromEntries(channelInfoEntries);
 
-  const posts = Array.from(channel.querySelectorAll('item')).map((item) => {
+  const items = Array.from(channel.querySelectorAll('item')).map((item) => {
     const children = Array.from(item.children).map((el) => [el.nodeName, el.textContent]);
     return Object.fromEntries(children);
   });
@@ -49,7 +54,7 @@ export const parseXML = (xmlData) => {
   const channelData = {
     rss: {
       channel: channelInfo,
-      posts,
+      items,
     },
   };
   return channelData;

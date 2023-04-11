@@ -12,7 +12,9 @@ export default (watchedState, i18nInstance, elements) => {
   const postsUl = posts.querySelector('ul');
 
   watchedState.posts.forEach((post) => {
-    const isRead = watchedState.uiState.readPosts.some((readPost) => readPost.link === post.link);
+    const isRead = watchedState.ui.readPosts.some(
+      (readPost) => readPost.link === post.link,
+    );
     const postlHTML = `
 		  <li
 		  class="list-group-item d-flex justify-content-between align-items-start border-0 border-end-0">
