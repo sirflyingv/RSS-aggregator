@@ -58,8 +58,9 @@ export default () => {
 
   const inputSchema = yup.string().trim().required().url();
 
-  const isUrlUnique = (url) =>
-    !watchedState.channels.find((channel) => channel.url === url);
+  function isUrlUnique(url) {
+    return !watchedState.channels.find((channel) => channel.url === url);
+  }
 
   function handleFormSubmit(form) {
     const data = new FormData(form);
