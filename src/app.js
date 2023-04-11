@@ -35,6 +35,16 @@ export default () => {
     },
     form: 'startup',
     process: 'idle',
+    addChannel(channel) {
+      const channelId = _.uniqueId('channel_');
+      const idfyiedChannel = { ...channel, ...{ channelId } };
+      this.channels.push(idfyiedChannel);
+    },
+    addPost(post, channelId) {
+      const postId = _.uniqueId('post_');
+      const idfyiedPost = { ...post, ...{ postId, channelId } };
+      this.posts.push(idfyiedPost);
+    },
   };
 
   const watchedState = onChange(state, () => {
@@ -77,20 +87,16 @@ export default () => {
         })
         .then((rssData) => {
           const parsedRss = parseXML(rssData);
-          if (!parsedRss) {
-            watchedState.form = 'invalid_rss';
-          } else {
-            const { channel, posts } = normalizeRssObj(parsedRss, url);
-            watchedState.channels.push(channel);
-            watchedState.posts.push(...posts.reverse());
-            watchedState.form = 'submitted';
-          }
+          const { channel, posts } = normalizeRssObj(parsedRss, url);
+          watchedState.addChannel(channel);
+          posts.reverse().forEach((post) => watchedState.addPost(post));
+          watchedState.form = 'submitted';
         })
         .catch((err) => {
           if (err.message.key === 'noInput') watchedState.form = 'no_input';
           if (err.message.key === 'notUrl') watchedState.form = 'invalid_URL';
-          if (err.code === 'ERR_NETWORK') watchedState.form = 'network_error';
           if (err.isParsingError) watchedState.form = 'invalid_rss';
+          if (err.code === 'ERR_NETWORK') watchedState.form = 'network_error';
           console.error(err.message);
         });
     }
@@ -138,6 +144,7 @@ export default () => {
         const postLink = e.target.href;
         handlePostClick(postLink);
       });
+
       elements.posts.addEventListener('auxclick', (e) => {
         if (e.target.tagName !== 'A') return;
         const postLink = e.target.href;
@@ -146,7 +153,10 @@ export default () => {
     });
 
   function isPostFresh(post) {
-    return !watchedState.posts.some((loadedPost) => _.isEqual(loadedPost, post));
+    return !watchedState.posts.some(
+      // in different RSS versions different nuances
+      (loadedPost) => loadedPost.title === post.title || loadedPost.link === post.link,
+    );
   }
 
   const updateFeed = () => {
@@ -158,7 +168,7 @@ export default () => {
             const normalizedRss = normalizeRssObj(parsedRss, channel.url);
             const updatedPosts = normalizedRss.posts;
             const freshPosts = updatedPosts.filter((newPost) => isPostFresh(newPost));
-            watchedState.posts.push(...freshPosts.reverse());
+            freshPosts.reverse().forEach((post) => watchedState.addPost(post));
           })
           .catch((err) => {
             console.error(err.message);
