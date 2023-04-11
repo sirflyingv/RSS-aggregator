@@ -29,7 +29,8 @@ export default () => {
     channels: [], // id
     posts: [], // id
     ui: {
-      modalPost: {}, // modal state without bootstrap
+      modalPost: {},
+      showModal: false, // modal state without bootstrap
       readPosts: [], // сюда id постов
     },
     form: 'startup',
@@ -97,6 +98,7 @@ export default () => {
   function handlePostClick(postLink) {
     const chosenPost = watchedState.posts.find((post) => post.link === postLink);
     watchedState.ui.modalPost = chosenPost;
+    watchedState.ui.showModal = true;
     watchedState.ui.readPosts.push(chosenPost);
   }
 
@@ -121,6 +123,15 @@ export default () => {
         const postLink = e.target.previousElementSibling.href;
         handlePostClick(postLink);
       });
+
+      elements.modalCloseButton.addEventListener('click', () => {
+        watchedState.ui.showModal = false;
+      });
+
+      elements.modalWindow.addEventListener('click', () => {
+        watchedState.ui.showModal = false;
+      });
+
       elements.posts.addEventListener('click', (e) => {
         if (e.target.tagName !== 'A') return;
         const postLink = e.target.href;

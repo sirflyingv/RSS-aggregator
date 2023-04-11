@@ -4,6 +4,7 @@ import renderModal from './modalView';
 import renderChannels from './channelsView';
 
 const elements = {
+  body: document.querySelector('body'),
   headerText: document.querySelector('#header-text'),
   lead: document.querySelector('#lead'),
   sample: document.querySelector('#sample'),
@@ -14,6 +15,8 @@ const elements = {
   feedback: document.querySelector('#feedback'),
   posts: document.querySelector('.posts'),
   channels: document.querySelector('.feeds'),
+  modalWindow: document.querySelector('.modal'),
+  modalBackdrop: document.querySelector('.modal-backdrop'),
   modalTitle: document.querySelector('.modal-title'),
   modalBody: document.querySelector('.modal-body'),
   fullArticleButton: document.querySelector('.full-article'),
