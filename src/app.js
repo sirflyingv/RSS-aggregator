@@ -9,18 +9,33 @@ import locales from './locales/index.js';
 import { UPDATE_INTERVAL } from './config.js';
 import { fetchRSS, parseXML, normalizeRssObj } from './helpers.js';
 
-import {
-  elements,
-  renderForm,
-  renderPosts,
-  renderModal,
-  renderChannels,
-} from './Views/index.js';
+// eslint-disable-next-line object-curly-newline
+import { renderMain, renderPosts, renderModal, renderChannels } from './Views/index.js';
 
 const { ru } = locales;
 
 export default () => {
   const i18nInstance = i18n.createInstance();
+
+  const elements = {
+    body: document.querySelector('body'),
+    headerText: document.querySelector('#header-text'),
+    lead: document.querySelector('#lead'),
+    sample: document.querySelector('#sample'),
+    btnAdd: document.querySelector('#button-add'),
+    form: document.querySelector('form'),
+    input: document.querySelector('#url-input'),
+    label: document.querySelector('label'),
+    feedback: document.querySelector('#feedback'),
+    posts: document.querySelector('.posts'),
+    channels: document.querySelector('.feeds'),
+    modalWindow: document.querySelector('.modal'),
+    modalBackdrop: document.querySelector('.modal-backdrop'),
+    modalTitle: document.querySelector('.modal-title'),
+    modalBody: document.querySelector('.modal-body'),
+    fullArticleButton: document.querySelector('.full-article'),
+    modalCloseButton: document.querySelector('#btn-close-modal'),
+  };
 
   // Model
   const state = {
@@ -30,7 +45,7 @@ export default () => {
     ui: {
       modalPost: {},
       showModal: false,
-      readPosts: [], // сюда id постов и юзать для отметки прочитанного
+      readPostsIds: [],
     },
     form: { valid: true, error: '' },
     fetch: { state: 'startup', error: '' },
@@ -47,7 +62,7 @@ export default () => {
   };
 
   const watchedState = onChange(state, () => {
-    renderForm(watchedState, i18nInstance, elements);
+    renderMain(watchedState, i18nInstance, elements);
     renderModal(watchedState, i18nInstance, elements);
     if (watchedState.channels.length > 0) {
       renderChannels(watchedState, i18nInstance, elements);
@@ -71,6 +86,7 @@ export default () => {
     return !watchedState.channels.find((channel) => channel.url === url);
   }
 
+  // controller
   function handleFormSubmit(form) {
     const data = new FormData(form);
     const url = data.get('url');
@@ -113,11 +129,11 @@ export default () => {
     }
   }
 
-  function handlePostClick(postLink) {
-    const chosenPost = watchedState.posts.find((post) => post.link === postLink);
+  function handlePostClick(postId) {
+    const chosenPost = watchedState.posts.find((post) => post.postId === postId);
     watchedState.ui.modalPost = chosenPost;
     watchedState.ui.showModal = true;
-    watchedState.ui.readPosts.push(chosenPost);
+    watchedState.ui.readPostsIds.push(postId);
   }
 
   i18nInstance
@@ -136,12 +152,6 @@ export default () => {
         handleFormSubmit(e.target);
       });
 
-      elements.posts.addEventListener('click', (e) => {
-        if (e.target.type !== 'button') return;
-        const postLink = e.target.previousElementSibling.href;
-        handlePostClick(postLink);
-      });
-
       elements.modalCloseButton.addEventListener('click', () => {
         watchedState.ui.showModal = false;
       });
@@ -151,15 +161,21 @@ export default () => {
       });
 
       elements.posts.addEventListener('click', (e) => {
-        if (e.target.tagName !== 'A') return;
-        const postLink = e.target.href;
-        handlePostClick(postLink);
+        if (!e.target.classList.contains('btn-show-modal')) return;
+        const { postId } = e.target.closest('li').dataset;
+        handlePostClick(postId);
+      });
+
+      elements.posts.addEventListener('click', (e) => {
+        if (!e.target.classList.contains('post-link')) return;
+        const { postId } = e.target.closest('li').dataset;
+        watchedState.ui.readPostsIds.push(postId);
       });
 
       elements.posts.addEventListener('auxclick', (e) => {
-        if (e.target.tagName !== 'A') return;
-        const postLink = e.target.href;
-        handlePostClick(postLink);
+        if (!e.target.classList.contains('post-link')) return;
+        const { postId } = e.target.closest('li').dataset;
+        watchedState.ui.readPostsIds.push(postId);
       });
     });
 

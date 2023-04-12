@@ -12,22 +12,22 @@ export default (watchedState, i18nInstance, elements) => {
   const postsUl = posts.querySelector('ul');
 
   watchedState.posts.forEach((post) => {
-    const isRead = watchedState.ui.readPosts.some(
-      (readPost) => readPost.link === post.link,
-    );
+    const isRead = watchedState.ui.readPostsIds.some((id) => id === post.postId);
     const postlHTML = `
 		  <li
-		  class="list-group-item d-flex justify-content-between align-items-start border-0 border-end-0">
+		  class="list-group-item d-flex justify-content-between align-items-start border-0 border-end-0"
+		  data-post-id="${post.postId}"
+		  >
 		  <a
 			href="${post.link}"
-			class="${isRead ? 'fw-normal link-secondary' : 'fw-bold'}"
+			class="${isRead ? 'fw-normal link-secondary' : 'fw-bold'} post-link"
 			data-id="6"
 			target="_blank"
 			rel="noopener noreferrer"
 		  >${post.title}</a>
 		  <button
 			type="button"
-			class="btn btn-outline-primary btn-sm"
+			class="btn btn-outline-primary btn-sm btn-show-modal"
 			data-id="6"
 			data-bs-toggle="modal"
 			data-bs-target="#modal"
