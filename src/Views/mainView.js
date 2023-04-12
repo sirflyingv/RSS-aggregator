@@ -65,22 +65,11 @@ export default (watchedState, i18nInstance, elements) => {
   }
 
   switch (watchedState.fetch.error) {
-    // case 'no_input':
-    //   feedback.innerText = i18nInstance.t('feedbackNoInput');
-    //   break;
-    // case 'invalid_URL':
-    //   feedback.innerText = i18nInstance.t('feedbackInvalid');
-    //   break;
-    // case 'not_unique':
-    //   feedback.innerText = i18nInstance.t('feedbackNotUnique');
-    //   break;
     case 'invalid_rss':
       feedback.innerText = i18nInstance.t('feedbackRssInvalid');
-      input.value = '';
       break;
     case 'network_error':
       feedback.innerText = i18nInstance.t('feedbackNetworkError');
-      input.value = '';
       break;
     default:
       //
