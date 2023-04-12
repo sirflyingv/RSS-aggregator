@@ -88,12 +88,14 @@ export default () => {
 
   // controller
   function handleFormSubmit(form) {
+    watchedState.fetch.state = 'idle';
     const data = new FormData(form);
     const url = data.get('url');
 
     if (!isUrlUnique(url)) {
-      watchedState.fetch = { state: 'fail', error: 'not_unique' };
-      watchedState.form.valid = false;
+      // watchedState.fetch = { state: 'fail', error: 'not_unique' };
+      // watchedState.form.valid = false;
+      watchedState.form = { valid: false, error: 'not_unique' };
     } else {
       inputSchema
         .validate(url)
@@ -111,12 +113,13 @@ export default () => {
         })
         .catch((err) => {
           if (err.message.key === 'noInput') {
-            watchedState.fetch = { state: 'fail', error: 'no_input' };
-            watchedState.form.valid = false;
+            // watchedState.fetch = { state: 'fail', error: 'no_input' };
+            // watchedState.fetch.state = { state: 'fail', error: 'no_input' };
+            watchedState.form = { valid: false, error: 'no_input' };
           }
           if (err.message.key === 'notUrl') {
-            watchedState.fetch = { state: 'fail', error: 'invalid_URL' };
-            watchedState.form.valid = false;
+            // watchedState.fetch = { state: 'fail', error: 'invalid_URL' };
+            watchedState.form = { valid: false, error: 'invalid_URL' };
           }
           if (err.isParsingError) {
             watchedState.fetch = { state: 'fail', error: 'invalid_rss' };

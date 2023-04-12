@@ -11,10 +11,28 @@ export default (watchedState, i18nInstance, elements) => {
 
   switch (watchedState.form.valid) {
     case false:
+      console.log('false');
       input.classList.add('is-invalid');
+      feedback.classList.add('text-danger');
       break;
     case true:
       input.classList.remove('is-invalid');
+      feedback.classList.remove('text-danger');
+      break;
+    default:
+      //
+      break;
+  }
+
+  switch (watchedState.form.error) {
+    case 'no_input':
+      feedback.innerText = i18nInstance.t('feedbackNoInput');
+      break;
+    case 'invalid_URL':
+      feedback.innerText = i18nInstance.t('feedbackInvalid');
+      break;
+    case 'not_unique':
+      feedback.innerText = i18nInstance.t('feedbackNotUnique');
       break;
     default:
       //
@@ -22,11 +40,6 @@ export default (watchedState, i18nInstance, elements) => {
   }
 
   switch (watchedState.fetch.state) {
-    case 'idle':
-      btnAdd.removeAttribute('disabled');
-      input.removeAttribute('disabled');
-      feedback.classList.remove('text-danger');
-      break;
     case 'fail':
       btnAdd.removeAttribute('disabled');
       input.removeAttribute('disabled');
@@ -52,15 +65,15 @@ export default (watchedState, i18nInstance, elements) => {
   }
 
   switch (watchedState.fetch.error) {
-    case 'no_input':
-      feedback.innerText = i18nInstance.t('feedbackNoInput');
-      break;
-    case 'invalid_URL':
-      feedback.innerText = i18nInstance.t('feedbackInvalid');
-      break;
-    case 'not_unique':
-      feedback.innerText = i18nInstance.t('feedbackNotUnique');
-      break;
+    // case 'no_input':
+    //   feedback.innerText = i18nInstance.t('feedbackNoInput');
+    //   break;
+    // case 'invalid_URL':
+    //   feedback.innerText = i18nInstance.t('feedbackInvalid');
+    //   break;
+    // case 'not_unique':
+    //   feedback.innerText = i18nInstance.t('feedbackNotUnique');
+    //   break;
     case 'invalid_rss':
       feedback.innerText = i18nInstance.t('feedbackRssInvalid');
       input.value = '';
