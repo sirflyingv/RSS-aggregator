@@ -167,13 +167,13 @@ export default () => {
       });
 
       elements.posts.addEventListener('click', (e) => {
-        if (!e.target.classList.contains('post-link')) return;
+        if (!e.target.dataset.postLink) return;
         const { postId } = e.target.closest('li').dataset;
         watchedState.ui.readPostsIds.push(postId);
       });
 
       elements.posts.addEventListener('auxclick', (e) => {
-        if (!e.target.classList.contains('post-link')) return;
+        if (!e.target.dataset.postLink) return;
         const { postId } = e.target.closest('li').dataset;
         watchedState.ui.readPostsIds.push(postId);
       });

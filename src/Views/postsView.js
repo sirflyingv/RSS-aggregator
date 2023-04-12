@@ -20,7 +20,8 @@ export default (watchedState, i18nInstance, elements) => {
 		  >
 		  <a
 			href="${post.link}"
-			class="${isRead ? 'fw-normal link-secondary' : 'fw-bold'} post-link"
+			class="${isRead ? 'fw-normal link-secondary' : 'fw-bold'}"
+			data-post-link="true"
 			data-id="6"
 			target="_blank"
 			rel="noopener noreferrer"
