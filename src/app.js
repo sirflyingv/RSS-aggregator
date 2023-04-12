@@ -32,8 +32,8 @@ export default () => {
       showModal: false,
       readPosts: [], // сюда id постов и юзать для отметки прочитанного
     },
-    form: 'startup',
-    process: 'idle',
+    form: { valid: true, error: '' },
+    fetch: { state: 'startup', error: '' },
     addChannel(channel) {
       const channelId = _.uniqueId('channel_');
       const idfyiedChannel = { ...channel, ...{ channelId } };
@@ -76,14 +76,16 @@ export default () => {
     const url = data.get('url');
 
     if (!isUrlUnique(url)) {
-      watchedState.process = 'not_unique';
-      watchedState.form = 'invalid';
+      // watchedState.fetch.state = 'not_unique';
+      watchedState.fetch = { state: 'fail', error: 'not_unique' };
+      watchedState.form.valid = false;
     } else {
       inputSchema
         .validate(url)
         .then(() => {
-          watchedState.form = 'valid';
-          watchedState.process = 'awaiting'; // separate form state and general process state !!!
+          watchedState.form.valid = true;
+          watchedState.fetch = { state: 'fetching', error: null };
+          // watchedState.fetch.state = 'awaiting'; // separate form state and general process state !!!
           return fetchRSS(url);
         })
         .then((rssData) => {
@@ -91,23 +93,27 @@ export default () => {
           const { channel, posts } = normalizeRssObj(parsedRss, url);
           watchedState.addChannel(channel);
           posts.reverse().forEach((post) => watchedState.addPost(post));
-          watchedState.process = 'submitted';
+          // watchedState.fetch.state = 'submitted';
+          watchedState.fetch = { state: 'submitted', error: null };
         })
         .catch((err) => {
           if (err.message.key === 'noInput') {
-            watchedState.process = 'no_input';
-            watchedState.form = 'invalid';
+            watchedState.fetch = { state: 'fail', error: 'no_input' };
+            // watchedState.fetch.state = 'no_input';
+            watchedState.form.valid = false;
           }
           if (err.message.key === 'notUrl') {
-            watchedState.process = 'invalid_URL';
-            watchedState.form = 'invalid';
+            watchedState.fetch = { state: 'fail', error: 'invalid_URL' };
+            // watchedState.fetch.state = 'invalid_URL';
+            watchedState.form.valid = false;
           }
           if (err.isParsingError) {
-            watchedState.process = 'invalid_rss';
-            watchedState.form = 'invalid';
+            watchedState.fetch = { state: 'fail', error: 'invalid_rss' };
+            // watchedState.fetch.state = 'invalid_rss';
           }
           if (err.code === 'ERR_NETWORK') {
-            watchedState.process = 'network_error';
+            watchedState.fetch = { state: 'fail', error: 'network_error' };
+            // watchedState.fetch.state = 'network_error';
           }
           console.error(err.message);
         });
@@ -130,7 +136,7 @@ export default () => {
       interpolation: { escapeValue: false },
     })
     .then(() => {
-      watchedState.form = 'filling';
+      watchedState.fetch.state = 'idle';
 
       elements.form.addEventListener('submit', (e) => {
         e.preventDefault();
