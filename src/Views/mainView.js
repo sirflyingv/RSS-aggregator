@@ -11,7 +11,6 @@ export default (watchedState, i18nInstance, elements) => {
 
   switch (watchedState.form.valid) {
     case false:
-      console.log('false');
       input.classList.add('is-invalid');
       feedback.classList.add('text-danger');
       break;

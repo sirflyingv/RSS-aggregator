@@ -49,19 +49,6 @@ export default () => {
     },
     form: { valid: true, error: null },
     fetch: { state: 'startup', error: null },
-    // addChannel(channel) {
-    //   const channelId = _.uniqueId('channel_');
-    //   const idfyiedChannel = { ...channel, ...{ channelId } };
-    //   this.channels.push(idfyiedChannel);
-    // },
-    // addPosts(posts, channelId) {
-    //   const idfyiedPosts = posts.map((post) => ({
-    //     ...post,
-    //     ...{ postId: _.uniqueId('post_'), channelId },
-    //   }));
-    //   this.posts.push(...idfyiedPosts);
-    //   console.log(this.posts);
-    // },
   };
 
   const watchedState = onChange(state, () => {
@@ -142,7 +129,7 @@ export default () => {
           if (err.code === 'ERR_NETWORK') {
             watchedState.fetch = { state: 'fail', error: 'network_error' };
           }
-          console.error(err.message);
+          console.error(err);
         });
     }
   };
@@ -210,7 +197,7 @@ export default () => {
             addPosts(freshPosts.reverse());
           })
           .catch((err) => {
-            console.error(err.message);
+            console.error(err);
           });
       });
     }

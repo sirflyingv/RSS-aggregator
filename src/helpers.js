@@ -16,10 +16,10 @@ export const composeProxifiedUrl = (RssUrl) => {
 export const parseXML = (xmlData) => {
   const parser = new DOMParser();
   const data = parser.parseFromString(xmlData, 'text/xml');
-  if (data.children[0].nodeName !== 'rss') {
+  if (data.querySelector('parsererror')) {
     const error = new Error('XML does not contain RSS');
     error.isParsingError = true;
-    // error.data = data;
+    error.data = data;
     throw error;
   }
 
