@@ -186,21 +186,14 @@ export default () => {
       });
     });
 
-  // function isPostFresh(post) {
-  //   return !watchedState.posts.some(
-  //     // in different RSS versions different nuances
-  //     (loadedPost) => loadedPost.title === post.title || loadedPost.link === post.link,
-  //   );
-  // }
-
   function getFreshPosts(posts, currentPosts) {
-    return posts.filter(
-      (post) =>
-        !currentPosts.some(
-          (loadedPost) =>
-            loadedPost.title === post.title && loadedPost.link === post.link,
-        ),
-    );
+    function isFresh(post) {
+      return !currentPosts.some(
+        (curPost) => curPost.title === post.title && curPost.link === post.link,
+      );
+    }
+    const fresh = posts.filter(isFresh);
+    return fresh;
   }
 
   const updateFeed = () => {
