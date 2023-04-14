@@ -1,11 +1,7 @@
 import axios from 'axios';
-import {
-  ORIGIN_PROXY_URL,
-  ORIGIN_PROXY_PATHNAME,
-  ORIGIN_PROXY_PARAMETERS,
-} from './config.js';
+import { ORIGIN_PROXY_URL, ORIGIN_PROXY_PATHNAME, ORIGIN_PROXY_PARAMETERS } from './config.js';
 
-export function composeProxifiedUrl(RssUrl) {
+export const composeProxifiedUrl = (RssUrl) => {
   const proxifiedUrl = new URL(ORIGIN_PROXY_URL);
   proxifiedUrl.pathname = ORIGIN_PROXY_PATHNAME;
 
@@ -15,7 +11,7 @@ export function composeProxifiedUrl(RssUrl) {
 
   proxifiedUrl.searchParams.set('url', RssUrl);
   return proxifiedUrl;
-}
+};
 
 export const parseXML = (xmlData) => {
   const parser = new DOMParser();

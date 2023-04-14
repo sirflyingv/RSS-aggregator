@@ -49,19 +49,19 @@ export default () => {
     },
     form: { valid: true, error: null },
     fetch: { state: 'startup', error: null },
-    addChannel(channel) {
-      const channelId = _.uniqueId('channel_');
-      const idfyiedChannel = { ...channel, ...{ channelId } };
-      this.channels.push(idfyiedChannel);
-    },
-    addPosts(posts, channelId) {
-      const idfyiedPosts = posts.map((post) => ({
-        ...post,
-        ...{ postId: _.uniqueId('post_'), channelId },
-      }));
-      this.posts.push(...idfyiedPosts);
-      console.log(this.posts);
-    },
+    // addChannel(channel) {
+    //   const channelId = _.uniqueId('channel_');
+    //   const idfyiedChannel = { ...channel, ...{ channelId } };
+    //   this.channels.push(idfyiedChannel);
+    // },
+    // addPosts(posts, channelId) {
+    //   const idfyiedPosts = posts.map((post) => ({
+    //     ...post,
+    //     ...{ postId: _.uniqueId('post_'), channelId },
+    //   }));
+    //   this.posts.push(...idfyiedPosts);
+    //   console.log(this.posts);
+    // },
   };
 
   const watchedState = onChange(state, () => {
@@ -72,6 +72,20 @@ export default () => {
       renderPosts(watchedState, i18nInstance, elements);
     }
   });
+
+  const addChannel = (channel) => {
+    const channelId = _.uniqueId('channel_');
+    const idfyiedChannel = { ...channel, ...{ channelId } };
+    watchedState.channels.push(idfyiedChannel);
+  };
+
+  const addPosts = (posts, channelId) => {
+    const idfyiedPosts = posts.map((post) => ({
+      ...post,
+      ...{ postId: _.uniqueId('post_'), channelId },
+    }));
+    watchedState.posts.push(...idfyiedPosts);
+  };
 
   // validating url input
   setLocale({
@@ -85,12 +99,10 @@ export default () => {
 
   const inputSchema = yup.string().trim().required().url();
 
-  function isUrlUnique(url) {
-    return !watchedState.channels.find((channel) => channel.url === url);
-  }
+  const isUrlUnique = (url) => !watchedState.channels.find((channel) => channel.url === url);
 
   // controller
-  function handleFormSubmit(form) {
+  const handleFormSubmit = (form) => {
     watchedState.fetch.state = 'idle';
     const data = new FormData(form);
     const url = data.get('url');
@@ -113,8 +125,8 @@ export default () => {
             description: parsedRss.rss.channel.description,
           };
           const posts = parsedRss.rss.items;
-          watchedState.addChannel(channel);
-          watchedState.addPosts(posts.reverse());
+          addChannel(channel);
+          addPosts(posts.reverse());
           watchedState.fetch = { state: 'submitted', error: null };
         })
         .catch((err) => {
@@ -133,14 +145,14 @@ export default () => {
           console.error(err.message);
         });
     }
-  }
+  };
 
-  function handlePostClick(postId) {
+  const handlePostClick = (postId) => {
     const chosenPost = watchedState.posts.find((post) => post.postId === postId);
     watchedState.ui.modalPost = chosenPost;
     watchedState.ui.showModal = true;
     watchedState.ui.readPostsIds.push(postId);
-  }
+  };
 
   i18nInstance
     .init({
@@ -195,7 +207,7 @@ export default () => {
             const parsedRss = parseXML(rssData);
             const updatedPosts = parsedRss.rss.items;
             const freshPosts = getFreshPosts(updatedPosts, watchedState.posts);
-            watchedState.addPosts(freshPosts.reverse());
+            addPosts(freshPosts.reverse());
           })
           .catch((err) => {
             console.error(err.message);
