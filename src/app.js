@@ -195,8 +195,7 @@ export default () => {
         fetchRSS(channel.url)
           .then((rssData) => {
             const parsedRss = parseXML(rssData);
-            const normalizedRss = normalizeRssObj(parsedRss, channel.url);
-            const updatedPosts = normalizedRss.posts;
+            const updatedPosts = parsedRss.rss.items;
             const freshPosts = updatedPosts.filter((newPost) => isPostFresh(newPost));
             freshPosts.reverse().forEach((post) => watchedState.addPost(post));
           })
