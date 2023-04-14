@@ -7,7 +7,7 @@ import { setLocale } from 'yup';
 import locales from './locales/index.js';
 
 import { UPDATE_INTERVAL } from './config.js';
-import { fetchRSS, parseXML, normalizeRssObj } from './helpers.js';
+import { fetchRSS, parseXML } from './helpers.js';
 
 // eslint-disable-next-line object-curly-newline
 import { renderMain, renderPosts, renderModal, renderChannels } from './Views/index.js';
@@ -104,7 +104,12 @@ export default () => {
         })
         .then((rssData) => {
           const parsedRss = parseXML(rssData);
-          const { channel, posts } = normalizeRssObj(parsedRss, url);
+          const channel = {
+            url,
+            title: parsedRss.rss.channel.title,
+            description: parsedRss.rss.channel.description,
+          };
+          const posts = parsedRss.rss.items;
           watchedState.addChannel(channel);
           posts.reverse().forEach((post) => watchedState.addPost(post));
           watchedState.fetch = { state: 'submitted', error: null };

@@ -17,22 +17,9 @@ export function composeProxifiedUrl(RssUrl) {
   return proxifiedUrl;
 }
 
-export const normalizeRssObj = (obj, url) => {
-  const channelData = {
-    channel: {
-      url,
-      title: obj.rss.channel.title,
-      description: obj.rss.channel.description,
-    },
-    posts: obj.rss.items,
-  };
-  return channelData;
-};
-
-const xmlParser = new DOMParser();
-
 export const parseXML = (xmlData) => {
-  const data = xmlParser.parseFromString(xmlData, 'text/xml');
+  const parser = new DOMParser();
+  const data = parser.parseFromString(xmlData, 'text/xml');
   if (data.children[0].nodeName !== 'rss') {
     const error = new Error('XML does not contain RSS');
     error.isParsingError = true;
