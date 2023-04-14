@@ -47,8 +47,8 @@ export default () => {
       showModal: false,
       readPostsIds: [],
     },
-    form: { valid: true, error: '' },
-    fetch: { state: 'startup', error: '' },
+    form: { valid: true, error: null },
+    fetch: { state: 'startup', error: null },
     addChannel(channel) {
       const channelId = _.uniqueId('channel_');
       const idfyiedChannel = { ...channel, ...{ channelId } };
@@ -186,15 +186,20 @@ export default () => {
       });
     });
 
-  function getFreshPosts(posts, currentPosts) {
-    function isFresh(post) {
-      return !currentPosts.some(
-        (curPost) => curPost.title === post.title && curPost.link === post.link,
-      );
-    }
-    const fresh = posts.filter(isFresh);
-    return fresh;
-  }
+  // function getFreshPosts(posts, currentPosts) {
+  //   function isFresh(post) {
+  //     return !currentPosts.some(
+  //       (curPost) => curPost.title === post.title && curPost.link === post.link,
+  //     );
+  //   }
+  //   return posts.filter(isFresh);
+  // }
+
+  // const comparator = (post1, post2) =>
+  //   post1.title === post2.title && post1.link === post2.link;
+
+  const getFreshPosts2 = (posts, currentPosts) =>
+    _.differenceBy(posts, currentPosts, ['link', 'title']);
 
   const updateFeed = () => {
     if (watchedState.channels.length > 0) {
@@ -203,7 +208,7 @@ export default () => {
           .then((rssData) => {
             const parsedRss = parseXML(rssData);
             const updatedPosts = parsedRss.rss.items;
-            const freshPosts = getFreshPosts(updatedPosts, watchedState.posts);
+            const freshPosts = getFreshPosts2(updatedPosts, watchedState.posts);
             watchedState.addPosts(freshPosts.reverse());
           })
           .catch((err) => {
