@@ -198,8 +198,7 @@ export default () => {
   // const comparator = (post1, post2) =>
   //   post1.title === post2.title && post1.link === post2.link;
 
-  const getFreshPosts2 = (posts, currentPosts) =>
-    _.differenceBy(posts, currentPosts, ['link', 'title']);
+  const getFreshPosts2 = (posts, oldPosts) => _.differenceBy(posts, oldPosts, ['link', 'title']);
 
   const updateFeed = () => {
     if (watchedState.channels.length > 0) {
