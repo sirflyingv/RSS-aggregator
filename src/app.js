@@ -54,10 +54,13 @@ export default () => {
       const idfyiedChannel = { ...channel, ...{ channelId } };
       this.channels.push(idfyiedChannel);
     },
-    addPost(post, channelId) {
-      const postId = _.uniqueId('post_');
-      const idfyiedPost = { ...post, ...{ postId, channelId } };
-      this.posts.push(idfyiedPost);
+    addPosts(posts, channelId) {
+      const idfyiedPosts = posts.map((post) => ({
+        ...post,
+        ...{ postId: _.uniqueId('post_'), channelId },
+      }));
+      this.posts.push(...idfyiedPosts);
+      console.log(this.posts);
     },
   };
 
@@ -111,7 +114,8 @@ export default () => {
           };
           const posts = parsedRss.rss.items;
           watchedState.addChannel(channel);
-          posts.reverse().forEach((post) => watchedState.addPost(post));
+          watchedState.addPosts(posts.reverse());
+          // posts.reverse().forEach((post) => watchedState.addPost(post));
           watchedState.fetch = { state: 'submitted', error: null };
         })
         .catch((err) => {
@@ -197,7 +201,7 @@ export default () => {
             const parsedRss = parseXML(rssData);
             const updatedPosts = parsedRss.rss.items;
             const freshPosts = updatedPosts.filter((newPost) => isPostFresh(newPost));
-            freshPosts.reverse().forEach((post) => watchedState.addPost(post));
+            watchedState.addPosts(freshPosts.reverse());
           })
           .catch((err) => {
             console.error(err.message);
