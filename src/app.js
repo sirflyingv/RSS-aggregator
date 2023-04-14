@@ -185,7 +185,7 @@ export default () => {
       });
     });
 
-  const getFreshPosts2 = (posts, oldPosts) => _.differenceBy(posts, oldPosts, ['link', 'title']);
+  const getFreshPosts = (posts, oldPosts) => _.differenceBy(posts, oldPosts, ['link', 'title']);
 
   const updateFeed = () => {
     if (watchedState.channels.length > 0) {
@@ -194,7 +194,7 @@ export default () => {
           .then((rssData) => {
             const parsedRss = parseXML(rssData);
             const updatedPosts = parsedRss.rss.items;
-            const freshPosts = getFreshPosts2(updatedPosts, watchedState.posts);
+            const freshPosts = getFreshPosts(updatedPosts, watchedState.posts);
             watchedState.addPosts(freshPosts.reverse());
           })
           .catch((err) => {
