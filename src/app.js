@@ -186,10 +186,20 @@ export default () => {
       });
     });
 
-  function isPostFresh(post) {
-    return !watchedState.posts.some(
-      // in different RSS versions different nuances
-      (loadedPost) => loadedPost.title === post.title || loadedPost.link === post.link,
+  // function isPostFresh(post) {
+  //   return !watchedState.posts.some(
+  //     // in different RSS versions different nuances
+  //     (loadedPost) => loadedPost.title === post.title || loadedPost.link === post.link,
+  //   );
+  // }
+
+  function getFreshPosts(posts, currentPosts) {
+    return posts.filter(
+      (post) =>
+        !currentPosts.some(
+          (loadedPost) =>
+            loadedPost.title === post.title && loadedPost.link === post.link,
+        ),
     );
   }
 
@@ -200,7 +210,7 @@ export default () => {
           .then((rssData) => {
             const parsedRss = parseXML(rssData);
             const updatedPosts = parsedRss.rss.items;
-            const freshPosts = updatedPosts.filter((newPost) => isPostFresh(newPost));
+            const freshPosts = getFreshPosts(updatedPosts, watchedState.posts);
             watchedState.addPosts(freshPosts.reverse());
           })
           .catch((err) => {
