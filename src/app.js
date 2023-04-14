@@ -115,7 +115,6 @@ export default () => {
           const posts = parsedRss.rss.items;
           watchedState.addChannel(channel);
           watchedState.addPosts(posts.reverse());
-          // posts.reverse().forEach((post) => watchedState.addPost(post));
           watchedState.fetch = { state: 'submitted', error: null };
         })
         .catch((err) => {
@@ -185,18 +184,6 @@ export default () => {
         watchedState.ui.readPostsIds.push(postId);
       });
     });
-
-  // function getFreshPosts(posts, currentPosts) {
-  //   function isFresh(post) {
-  //     return !currentPosts.some(
-  //       (curPost) => curPost.title === post.title && curPost.link === post.link,
-  //     );
-  //   }
-  //   return posts.filter(isFresh);
-  // }
-
-  // const comparator = (post1, post2) =>
-  //   post1.title === post2.title && post1.link === post2.link;
 
   const getFreshPosts2 = (posts, oldPosts) => _.differenceBy(posts, oldPosts, ['link', 'title']);
 
