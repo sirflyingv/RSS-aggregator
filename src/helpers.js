@@ -1,5 +1,9 @@
 import axios from 'axios';
-import { ORIGIN_PROXY_URL, ORIGIN_PROXY_PATHNAME, ORIGIN_PROXY_PARAMETERS } from './config.js';
+import {
+  ORIGIN_PROXY_URL,
+  ORIGIN_PROXY_PATHNAME,
+  ORIGIN_PROXY_PARAMETERS,
+} from './config.js';
 
 export const composeProxifiedUrl = (RssUrl) => {
   const proxifiedUrl = new URL(ORIGIN_PROXY_URL);
@@ -36,8 +40,7 @@ export const parseXML = (xmlData) => {
 
   const channelData = {
     rss: {
-      channel: channelInfo,
-      items,
+      channel: { ...channelInfo, items },
     },
   };
   return channelData;

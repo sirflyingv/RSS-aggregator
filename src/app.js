@@ -51,6 +51,7 @@ export default () => {
   };
 
   const watchedState = onChange(state, (path) => {
+    console.log(path);
     if (/fetch/.test(path) || path === 'form') renderMain(watchedState, i18nInstance, elements);
     if (/posts/i.test(path)) renderPosts(watchedState, i18nInstance, elements);
     if (path === 'channels') renderChannels(watchedState, i18nInstance, elements);
@@ -108,7 +109,7 @@ export default () => {
             title: parsedRss.rss.channel.title,
             description: parsedRss.rss.channel.description,
           };
-          const posts = parsedRss.rss.items;
+          const posts = parsedRss.rss.channel.items;
           addChannel(channel);
           addPosts(posts.reverse());
           watchedState.fetch = { state: 'submitted', error: null };
@@ -184,22 +185,37 @@ export default () => {
   const getFreshPosts = (posts, oldPosts) => _.differenceBy(posts, oldPosts, ['link', 'title']);
 
   const updateFeed = () => {
-    if (watchedState.channels.length > 0) {
-      watchedState.channels.forEach((channel) => {
-        fetchRSS(channel.url)
-          .then((rssData) => {
-            const parsedRss = parseXML(rssData);
-            const updatedPosts = parsedRss.rss.items;
-            const freshPosts = getFreshPosts(updatedPosts, watchedState.posts);
-            addPosts(freshPosts.reverse());
-          })
-          .catch((err) => {
-            console.error(err);
-          });
-      });
-    }
-    setTimeout(updateFeed, UPDATE_INTERVAL);
+    // if (watchedState.channels.length > 0) {
+    const updates = watchedState.channels.map(
+      (channel) => fetchRSS(channel.url),
+      // .then((rssData) => {
+      //   const parsedRss = parseXML(rssData);
+      //   const updatedPosts = parsedRss.rss.channel.items;
+      //   const freshPosts = getFreshPosts(updatedPosts, watchedState.posts);
+      //   addPosts(freshPosts.reverse());
+      // })
+      // .catch((err) => {
+      //   console.error(err);
+      // });
+    );
+
+    Promise.all(updates)
+      .then((rssDataSets) => {
+        rssDataSets.forEach((rssData) => {
+          const parsedRss = parseXML(rssData);
+          const updatedPosts = parsedRss.rss.channel.items;
+          const freshPosts = getFreshPosts(updatedPosts, watchedState.posts);
+          console.log(freshPosts);
+          addPosts(freshPosts.reverse());
+        });
+      })
+      .finally(setTimeout(updateFeed, UPDATE_INTERVAL));
+    // }
+
+    // setTimeout(updateFeed, UPDATE_INTERVAL);
   };
 
   updateFeed();
 };
+
+// https://lorem-rss.herokuapp.com/feed?unit=second&interval=4
