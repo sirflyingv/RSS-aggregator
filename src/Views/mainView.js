@@ -1,7 +1,7 @@
-/* eslint-disable object-curly-newline */
-
 export default (watchedState, i18nInstance, elements) => {
-  const { label, headerText, lead, sample, btnAdd, input, feedback } = elements;
+  const {
+    label, headerText, lead, sample, btnAdd, input, feedback,
+  } = elements;
   label.innerText = i18nInstance.t('label');
   headerText.innerText = i18nInstance.t('header');
   lead.innerText = i18nInstance.t('lead');

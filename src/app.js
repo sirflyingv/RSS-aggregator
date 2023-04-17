@@ -1,4 +1,3 @@
-/* eslint-disable max-len */
 import _ from 'lodash';
 import onChange from 'on-change';
 import i18n from 'i18next';
@@ -9,8 +8,9 @@ import locales from './locales/index.js';
 import { UPDATE_INTERVAL } from './config.js';
 import { fetchRSS, parseXML } from './helpers.js';
 
-// eslint-disable-next-line object-curly-newline
-import { renderMain, renderPosts, renderModal, renderChannels } from './Views/index.js';
+import {
+  renderMain, renderPosts, renderModal, renderChannels,
+} from './Views/index.js';
 
 const { ru } = locales;
 
@@ -39,7 +39,6 @@ export default () => {
 
   // Model
   const state = {
-    links: [],
     channels: [],
     posts: [],
     ui: {
@@ -51,13 +50,11 @@ export default () => {
     fetch: { state: 'startup', error: null },
   };
 
-  const watchedState = onChange(state, () => {
-    renderMain(watchedState, i18nInstance, elements);
-    renderModal(watchedState, i18nInstance, elements);
-    if (watchedState.channels.length > 0) {
-      renderChannels(watchedState, i18nInstance, elements);
-      renderPosts(watchedState, i18nInstance, elements);
-    }
+  const watchedState = onChange(state, (path) => {
+    if (/fetch/.test(path) || path === 'form') renderMain(watchedState, i18nInstance, elements);
+    if (/posts/i.test(path)) renderPosts(watchedState, i18nInstance, elements);
+    if (path === 'channels') renderChannels(watchedState, i18nInstance, elements);
+    if (/modal/i.test(path)) renderModal(watchedState, i18nInstance, elements);
   });
 
   const addChannel = (channel) => {
