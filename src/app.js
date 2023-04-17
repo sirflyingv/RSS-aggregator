@@ -185,19 +185,7 @@ export default () => {
   const getFreshPosts = (posts, oldPosts) => _.differenceBy(posts, oldPosts, ['link', 'title']);
 
   const updateFeed = () => {
-    // if (watchedState.channels.length > 0) {
-    const updates = watchedState.channels.map(
-      (channel) => fetchRSS(channel.url),
-      // .then((rssData) => {
-      //   const parsedRss = parseXML(rssData);
-      //   const updatedPosts = parsedRss.rss.channel.items;
-      //   const freshPosts = getFreshPosts(updatedPosts, watchedState.posts);
-      //   addPosts(freshPosts.reverse());
-      // })
-      // .catch((err) => {
-      //   console.error(err);
-      // });
-    );
+    const updates = watchedState.channels.map((channel) => fetchRSS(channel.url));
 
     Promise.all(updates)
       .then((rssDataSets) => {
@@ -210,12 +198,7 @@ export default () => {
         });
       })
       .finally(setTimeout(updateFeed, UPDATE_INTERVAL));
-    // }
-
-    // setTimeout(updateFeed, UPDATE_INTERVAL);
   };
 
   updateFeed();
 };
-
-// https://lorem-rss.herokuapp.com/feed?unit=second&interval=4
