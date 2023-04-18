@@ -8,9 +8,9 @@ parserOptions:
   sourceType: module
 rules: {
     'no-console': 'off',
-    # 'no-undef': 'off',
+    'no-undef': 'off',
     'import/extensions': 0,
-    'linebreak-style': 0,
+    # 'linebreak-style': 0,
     'operator-linebreak': 0,
     'implicit-arrow-linebreak': 0,
     # 'comma-dangle': ['error', { 'functions': 'never' }],
