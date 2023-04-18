@@ -3,7 +3,7 @@ import onChange from 'on-change';
 import i18n from 'i18next';
 import * as yup from 'yup';
 import { setLocale } from 'yup';
-import locales from './locales/index.js';
+import ru from './locales/index.js';
 
 import { UPDATE_INTERVAL } from './config.js';
 import { fetchRSS, parseXML } from './helpers.js';
@@ -11,8 +11,6 @@ import { fetchRSS, parseXML } from './helpers.js';
 import {
   renderMain, renderPosts, renderModal, renderChannels,
 } from './Views/index.js';
-
-const { ru } = locales;
 
 export default () => {
   const i18nInstance = i18n.createInstance();
@@ -42,7 +40,8 @@ export default () => {
     channels: [],
     posts: [],
     ui: {
-      modalPost: {},
+      // modalPost: {},
+      modalPostId: null,
       showModal: false,
       readPostsIds: [],
     },
@@ -51,11 +50,28 @@ export default () => {
   };
 
   const watchedState = onChange(state, (path) => {
-    console.log(path);
-    if (/fetch/.test(path) || path === 'form') renderMain(watchedState, i18nInstance, elements);
-    if (/posts/i.test(path)) renderPosts(watchedState, i18nInstance, elements);
-    if (path === 'channels') renderChannels(watchedState, i18nInstance, elements);
-    if (/modal/i.test(path)) renderModal(watchedState, i18nInstance, elements);
+    switch (path) {
+      case 'fetch':
+        renderMain(watchedState, i18nInstance, elements);
+        break;
+      case 'form':
+        renderMain(watchedState, i18nInstance, elements);
+        break;
+      case 'posts':
+        renderPosts(watchedState, i18nInstance, elements);
+        break;
+      case 'channels':
+        renderChannels(watchedState, i18nInstance, elements);
+        break;
+      case 'ui.readPostsIds':
+        renderPosts(watchedState, i18nInstance, elements);
+        break;
+      case 'ui.showModal':
+        renderModal(watchedState, i18nInstance, elements);
+        break;
+      default:
+        break;
+    }
   });
 
   const addChannel = (channel) => {
@@ -88,7 +104,7 @@ export default () => {
 
   // controller
   const handleFormSubmit = (form) => {
-    watchedState.fetch.state = 'idle';
+    watchedState.fetch = { state: 'idle', error: null };
     const data = new FormData(form);
     const url = data.get('url');
 
@@ -98,7 +114,7 @@ export default () => {
       inputSchema
         .validate(url)
         .then(() => {
-          watchedState.form.valid = true;
+          watchedState.form = { valid: true, error: null };
           watchedState.fetch = { state: 'fetching', error: null };
           return fetchRSS(url);
         })
@@ -134,7 +150,7 @@ export default () => {
 
   const handlePostClick = (postId) => {
     const chosenPost = watchedState.posts.find((post) => post.postId === postId);
-    watchedState.ui.modalPost = chosenPost;
+    watchedState.ui.modalPostId = chosenPost.postId;
     watchedState.ui.showModal = true;
     watchedState.ui.readPostsIds.push(postId);
   };
@@ -148,7 +164,7 @@ export default () => {
       interpolation: { escapeValue: false },
     })
     .then(() => {
-      watchedState.fetch.state = 'idle';
+      watchedState.fetch = { state: 'idle', error: null };
 
       elements.form.addEventListener('submit', (e) => {
         e.preventDefault();
@@ -182,7 +198,9 @@ export default () => {
       });
     });
 
-  const getFreshPosts = (posts, oldPosts) => _.differenceBy(posts, oldPosts, ['link', 'title']);
+  const isSamePost = (post1, post2) => post1.title === post2.title && post1.link === post2.link;
+
+  const getFreshPosts = (posts, oldPosts) => _.differenceWith(posts, oldPosts, isSamePost);
 
   const updateFeed = () => {
     const updates = watchedState.channels.map((channel) => fetchRSS(channel.url));
@@ -193,7 +211,6 @@ export default () => {
           const parsedRss = parseXML(rssData);
           const updatedPosts = parsedRss.rss.channel.items;
           const freshPosts = getFreshPosts(updatedPosts, watchedState.posts);
-          console.log(freshPosts);
           addPosts(freshPosts.reverse());
         });
       })
