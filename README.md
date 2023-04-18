@@ -7,8 +7,11 @@
 
 Простой RSS агрегатор, позволяющий добавлять источники RSS лент и просматривать посты.
 
-![image](https://user-images.githubusercontent.com/22076495/232810583-12a95246-31f7-48fb-9bb2-82d03f1c8e54.png | width=100)
+Создано согласно MVC-архитектуре на чистом JavaScript с использовнием концепции наблюдаемого состояния. Сборщик - webpack, стилизация - bootstrap.
 
+[Деплой на Vercel](https://frontend-project-11-git-main-sirflyingv.vercel.app/)
+
+![RSS агрегатор](https://user-images.githubusercontent.com/22076495/232812924-1f8e1af8-7229-470f-9dfe-7e7f4c75f3d3.png)
 
 Установка: 
 ```make install```
@@ -18,7 +21,3 @@
 
 Запуск локального сервера:
 ```make run```
-
-
-
-[Деплой](https://frontend-project-11-git-main-sirflyingv.vercel.app/)
