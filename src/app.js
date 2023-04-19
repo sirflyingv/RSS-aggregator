@@ -40,7 +40,6 @@ export default () => {
     channels: [],
     posts: [],
     ui: {
-      // modalPost: {},
       modalPostId: null,
       showModal: false,
       readPostsIds: [],
@@ -142,8 +141,9 @@ export default () => {
           }
           if (err.code === 'ERR_NETWORK') {
             watchedState.fetch = { state: 'fail', error: 'network_error' };
+          } else {
+            console.error(err);
           }
-          console.error(err);
         });
     }
   };

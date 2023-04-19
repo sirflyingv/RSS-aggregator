@@ -1,5 +1,4 @@
 /* eslint-disable no-tabs */
-
 export default (watchedState, i18nInstance, elements) => {
   const { channels } = elements;
   channels.innerHTML = `
